@@ -1,9 +1,9 @@
-.Python
+*.Python
 env
 bin
 lib
 include
 local
 .DS_Store
-.pyc
+*.pyc
 pip-selfcheck.json

@@ -110,3 +110,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     #'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
+
+MEDIA_ROOT = os.path.join(PROJECT_ROOT, "uploaded")
+
+MEDIA_URL = '/uploaded/'

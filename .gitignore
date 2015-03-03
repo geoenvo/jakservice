@@ -7,3 +7,4 @@ local
 .DS_Store
 *.pyc
 pip-selfcheck.json
+jaksafe/jaksafe/uploaded/*

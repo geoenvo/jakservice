@@ -93,6 +93,7 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.request',
     'jaksafe.context_processors.resource_urls',
 )
 

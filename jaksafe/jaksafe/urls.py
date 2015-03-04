@@ -9,9 +9,9 @@ urlpatterns = patterns('',
     # url(r'^$', 'jaksafe.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
+    url(r'^$', 'report.views.report_auto', name='home'),
     url(r'^admin/', include(admin.site.urls)),
-    #url(r'^report/', include('report.urls')),
-    url(r'^$', include('report.urls')),
+    url(r'^report/', include('report.urls')),
 )
 
 # serve static files

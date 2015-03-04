@@ -9,5 +9,10 @@ def index(request):
 
 def report_auto(request, template='report/report_auto.html'):
     context_dict = {}
-    context_dict["page_title"] = 'Automatic Report'
+    context_dict["page_title"] = 'JakSAFE Automatic Report'
+    return render_to_response(template, RequestContext(request, context_dict))
+
+def report_adhoc(request, template='report/report_adhoc.html'):
+    context_dict = {}
+    context_dict["page_title"] = 'JakSAFE Ad Hoc DaLA Report'
     return render_to_response(template, RequestContext(request, context_dict))

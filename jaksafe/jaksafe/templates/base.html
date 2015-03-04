@@ -6,6 +6,8 @@
     <title>{% block title %}{% if SITE_NAME %} | {{ SITE_NAME }}{% endif %}{% endblock %}</title>
     <!-- Bootstrap -->
     <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
+    {% block extra_header %}{% endblock %}
+    <link href="{{ STATIC_URL }}css/site.css" rel="stylesheet">
  
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -15,10 +17,34 @@
     <![endif]-->
   </head>
   <body>
-    {% block body %}{% endblock %}
+    <div id="main" class="container">
+        <nav class="navbar navbar-default">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="javascript:void(0);">
+                        <img alt="JakSAFE" src="...">
+                    </a>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="{% url "report_auto" %}">Automatic Report</a></li>
+                    <li><a href="javascript:void(0);">Ad Hoc Report</a></li>
+                    <li><a href="javascript:void(0);">Configuration</a></li>
+                </ul>
+            </div>
+        </nav>
+        {% block content %}{% endblock %}
+        <div id="footer" id="" class="row">
+            <div class="col-md-12">
+                <div class="text-center"><a href="http://www.irisiko.com" target="_blank">JakSAFE &copy 2015</a></div>
+            </div>
+        </div>
+    </div>
+    
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="{{ STATIC_URL }}js/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+    {% block extra_footer %}{% endblock %}
+    <script src="{{ STATIC_URL }}js/site.js"></script>
   </body>
 </html>

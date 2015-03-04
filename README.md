@@ -44,7 +44,7 @@ How to deploy JakSAFE webapp on Ubuntu 14.04.
     * \# adjust database connection settings
 * python manage.py migrate
 * python manage.py createsuperuser
-    * # \enter admin account
+    * \#enter admin account
 
 ### run jakSAFE sql script to create tables ###
 
@@ -53,4 +53,4 @@ How to deploy JakSAFE webapp on Ubuntu 14.04.
 ### run dev server ###
 
 * python manage.py runserver 0.0.0.0:8000
-* \# open in browser http://<server ip>:8000
+* \# open in browser http://SERVER_IP:8000

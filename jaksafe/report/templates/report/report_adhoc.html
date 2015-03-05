@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block title %}{{ page_title }}{{ block.super }}{% endblock %}
 
@@ -15,16 +16,17 @@
 
 <div id="filter" class="row mb-20">
     <div class="col-md-12">
-        <p><strong>Select date range</strong></p>
-        <form class="form-inline">
+        <p><strong>{% trans "Select date range" %}</strong></p>
+        <form method="post" action="{% url "report_adhoc" %}" class="form-inline">
             <div class="form-group">
-                <input type="text" class="form-control datepicker" id="start_date" placeholder="Start Date">
+                <input type="text" class="form-control datepicker" id="start_date" placeholder="{% trans "Start Date" %}">
             </div>
             <div class="form-group">
                 <label for="date_end">&nbsp;&nbsp;&mdash;&nbsp;&nbsp;</label>
-                <input type="text" class="form-control datepicker" id="end_date" placeholder="End Date">
+                <input type="text" class="form-control datepicker" id="end_date" placeholder="{% trans "End Date" %}">
             </div>
-            <button type="submit" class="btn btn-default">Create Report</button>
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+            <button type="submit" class="btn btn-default">{% trans "Create Report" %}</button>
         </form>
     </div>
 </div>
@@ -35,12 +37,12 @@
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Date Created</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Estimated Damage</th>
-                    <th>Estimated Loss</th>
-                    <th>Result</th>
+                    <th>{% trans "Date Created" %}</th>
+                    <th>{% trans "Start Date" %}</th>
+                    <th>{% trans "End Date" %}</th>
+                    <th>{% trans "Estimated Damage" %}</th>
+                    <th>{% trans "Estimated Loss" %}</th>
+                    <th>{% trans "Result" %}</th>
                 </tr>
             </thead>
             <tbody>

@@ -1,3 +1,4 @@
+{% load i18n %}
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -22,13 +23,13 @@
             <div class="container">
                 <div class="navbar-header">
                     <a class="navbar-brand" href="javascript:void(0);">
-                        <img alt="JakSAFE" src="...">
+                        <img alt="{% if SITE_NAME %}{{ SITE_NAME }}{% endif %}" src="{{ STATIC_URL }}img/logo.png">
                     </a>
                 </div>
                 <ul class="nav navbar-nav">
-                    {% url "home" as home_url %}<li {% if request.get_full_path == home_url %}class="active"{% endif %}><a href="{% url "home" %}">Automatic Report</a></li>
-                    {% url "report_adhoc" as report_adhoc_url %}<li {% if request.get_full_path == report_adhoc_url %}class="active"{% endif %}><a href="{% url "report_adhoc" %}">Ad Hoc DaLA</a></li>
-                    <li><a href="javascript:void(0);">Configuration</a></li>
+                    {% url "report_auto" as report_auto_url %}<li {% if request.get_full_path == report_auto_url %}class="active"{% endif %}><a href="{% url "report_auto" %}">{% trans "Automatic Report" %}</a></li>
+                    {% url "report_adhoc" as report_adhoc_url %}<li {% if request.get_full_path == report_adhoc_url %}class="active"{% endif %}><a href="{% url "report_adhoc" %}">{% trans "Ad Hoc DaLA" %}</a></li>
+                    <li><a href="javascript:void(0);">{% trans "Configuration" %}</a></li>
                 </ul>
             </div>
         </nav>

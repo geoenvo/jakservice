@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ page_title }}{{ block.super }}{% endblock %}
+
+{% block extra_header %}
+{% endblock %}
+
+{% block content %}
+<div id="heading" id="" class="row mb-20">
+    <div class="col-md-12">
+        <h3>{{ page_title }}</h3>
+    </div>
+</div>
+
+<div id="filter" class="row mb-20">
+    <div class="col-md-12">
+        <p><strong>{% trans "Upload New File" %}</strong></p>
+        <form method="post" action="{% url "report_impact_config" %}" class="form-inline">
+            <div class="form-group">
+                <input type="file" id="upload_file">
+            </div>
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+            <button type="submit" class="btn btn-default">{% trans "Upload" %}</button>
+            <a class="btn btn-default" href="javascript:void(0);">{% trans "Download This Config" %}</a>
+        </form>
+    </div>
+</div>
+
+<div id="content" class="row mb-20">
+    <div class="col-md-12">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>{% trans "Kelas" %}</th>
+                    <th>{% trans "Tinggi Min" %}</th>
+                    <th>{% trans "Tinggi Max" %}</th>
+                    <th>{% trans "Durasi Min" %}</th>
+                    <th>{% trans "Durasi Max" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1.</td>
+                    <td>A1</td>
+                    <td>10</td>
+                    <td>50</td>
+                    <td>0</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td>2.</td>
+                    <td>A2</td>
+                    <td>50</td>
+                    <td>150</td>
+                    <td>0</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td>3.</td>
+                    <td>A3</td>
+                    <td>150</td>
+                    <td>1000</td>
+                    <td>0</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td>4.</td>
+                    <td>A4</td>
+                    <td>Terdampak</td>
+                    <td>Terdampak</td>
+                    <td>0</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td>5.</td>
+                    <td>B1</td>
+                    <td>10</td>
+                    <td>50</td>
+                    <td>1</td>
+                    <td>4</td>
+                </tr>
+                <tr>
+                    <td>6.</td>
+                    <td>B2</td>
+                    <td>50</td>
+                    <td>150</td>
+                    <td>1</td>
+                    <td>4</td>
+                </tr>
+                <tr>
+                    <td>7.</td>
+                    <td>B3</td>
+                    <td>150</td>
+                    <td>1000</td>
+                    <td>1</td>
+                    <td>4</td>
+                </tr>
+                <tr>
+                    <td>8.</td>
+                    <td>B4</td>
+                    <td>Terdampak</td>
+                    <td>Terdampak</td>
+                    <td>1</td>
+                    <td>4</td>
+                </tr>
+                <tr>
+                    <td>9.</td>
+                    <td>C1</td>
+                    <td>10</td>
+                    <td>50</td>
+                    <td>5</td>
+                    <td>8</td>
+                </tr>
+                <tr>
+                    <td>10.</td>
+                    <td>C2</td>
+                    <td>50</td>
+                    <td>150</td>
+                    <td>5</td>
+                    <td>8</td>
+                </tr>
+                <tr>
+                    <td>11.</td>
+                    <td>C3</td>
+                    <td>150</td>
+                    <td>1000</td>
+                    <td>5</td>
+                    <td>8</td>
+                </tr>
+                <tr>
+                    <td>12.</td>
+                    <td>C4</td>
+                    <td>Terdampak</td>
+                    <td>Terdampak</td>
+                    <td>5</td>
+                    <td>8</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_footer %}
+{% endblock %}

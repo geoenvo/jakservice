@@ -29,7 +29,7 @@
                 <ul class="nav navbar-nav">
                     {% url "report_auto" as report_auto_url %}<li {% if request.get_full_path == report_auto_url %}class="active"{% endif %}><a href="{% url "report_auto" %}">{% trans "Automatic Report" %}</a></li>
                     {% url "report_adhoc" as report_adhoc_url %}<li {% if request.get_full_path == report_adhoc_url %}class="active"{% endif %}><a href="{% url "report_adhoc" %}">{% trans "Ad Hoc DaLA" %}</a></li>
-                    <li><a href="javascript:void(0);">{% trans "Configuration" %}</a></li>
+                    {% url "report_impact_config" as report_impact_config_url %}<li {% if request.get_full_path == report_impact_config_url %}class="active"{% endif %}><a href="{% url "report_impact_config" %}">{% trans "Impact Class Config" %}</a></li>
                 </ul>
             </div>
         </nav>

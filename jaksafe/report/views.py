@@ -26,3 +26,13 @@ def report_adhoc(request, template='report/report_adhoc.html'):
         return HttpResponse("form submit")
     else:
         return render_to_response(template, RequestContext(request, context_dict))
+
+def report_impact_config(request, template='report/report_impact_config.html'):
+    context_dict = {}
+    context_dict["page_title"] = 'Impact Class Config'
+    
+    if request.method == "POST":
+        # handle form submit
+        return HttpResponse("form submit")
+    else:
+        return render_to_response(template, RequestContext(request, context_dict))

@@ -95,6 +95,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.request',
     'jaksafe.context_processors.resource_urls',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
 )
 
 TEMPLATE_DIRS = (

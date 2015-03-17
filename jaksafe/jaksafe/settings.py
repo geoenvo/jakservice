@@ -117,3 +117,5 @@ STATICFILES_FINDERS = (
 MEDIA_ROOT = os.path.join(PROJECT_ROOT, "uploaded")
 
 MEDIA_URL = '/uploaded/'
+
+IMPACT_CLASS_CONFIG = os.path.join(MEDIA_ROOT, "config", "kelas_dampak.csv")

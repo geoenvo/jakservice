@@ -61,7 +61,7 @@
             <tbody>
                 {% for ac in adhoc_calc %}
                 <tr>
-                    <td>forloop.counter</td>
+                    <td>{{ forloop.counter }}.</td>
                     <td>{{ ac.t0 }}</td>
                     <td>{{ ac.t1 }}</td>
                     <td>{{ ac.damage }}</td>
@@ -69,6 +69,7 @@
                     <td><a href="javascript:void(0);">Report</a> | <a href="javascript:void(0);">Shapefile</a> | <a href="javascript:void(0);">Calculation File</a></td>
                 </tr>
                 {% endfor %}
+                <!--
                 <tr>
                     <td>1.</td>
                     <td>2015-03-03</td>
@@ -109,6 +110,7 @@
                     <td>250.000.000,00</td>
                     <td><a href="javascript:void(0);">Report</a> | <a href="javascript:void(0);">Shapefile</a> | <a href="javascript:void(0);">Calculation File</a></td>
                 </tr>
+                -->
             </tbody>
         </table>
         {% else %}

@@ -3,6 +3,9 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.db import connection
 from datetime import datetime
+from django.conf import settings
+import os
+import csv
 
 '''
 def index(request):
@@ -103,6 +106,15 @@ def report_adhoc(request, template='report/report_adhoc.html'):
 def report_impact_config(request, template='report/report_impact_config.html'):
     context_dict = {}
     context_dict["page_title"] = 'JakSAFE Impact Class Config'
+    
+    if (os.path.isfile(settings.IMPACT_CLASS_CONFIG) == True):
+        csvlist = []
+        with open(settings.IMPACT_CLASS_CONFIG, 'rb') as csvfile:
+            csvreader = csv.DictReader(csvfile)
+            for row in csvreader:
+                csvlist.append(row)
+        
+        context_dict["csvlist"] = csvlist
     
     if request.method == "POST":
         # handle form submit

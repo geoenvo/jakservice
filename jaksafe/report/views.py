@@ -29,7 +29,7 @@ def report_adhoc(request, template='report/report_adhoc.html'):
 
 def report_impact_config(request, template='report/report_impact_config.html'):
     context_dict = {}
-    context_dict["page_title"] = 'Impact Class Config'
+    context_dict["page_title"] = 'JakSAFE Impact Class Config'
     
     if request.method == "POST":
         # handle form submit

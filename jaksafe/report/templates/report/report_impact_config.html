@@ -22,7 +22,7 @@
             </div>
             <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
             <button type="submit" class="btn btn-default">{% trans "Upload" %}</button>
-            <a class="btn btn-default" href="javascript:void(0);">{% trans "Download This Config" %}</a>
+            <a class="btn btn-default" href="{{ MEDIA_URL }}{{ IMPACT_CLASS_URL }}" target="_blank">{% trans "Download This Config" %}</a>
         </form>
     </div>
 </div>

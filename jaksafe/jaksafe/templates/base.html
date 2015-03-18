@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}{% if SITE_NAME %} | {{ SITE_NAME }}{% endif %}{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{{STATIC_URL}}favicon.png">
     <!-- Bootstrap -->
     <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
     {% block extra_header %}{% endblock %}

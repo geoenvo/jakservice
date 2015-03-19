@@ -40,6 +40,7 @@ How to deploy JakSAFE webapp on Ubuntu 14.04.
 ### sync database ###
 
 * cd jaksafe
+* cp jaksafe/settings.py.sample jaksafe/settings.py
 * nano jaksafe/settings.py
     * \# adjust database connection settings
 * python manage.py migrate
@@ -52,5 +53,6 @@ How to deploy JakSAFE webapp on Ubuntu 14.04.
 
 ### run dev server ###
 
-* python manage.py runserver 0.0.0.0:8000
-* \# open in browser http://SERVER_IP:8000
+* python manage.py runserver 0.0.0.0:8000 \# open in browser http://SERVER_IP:8000
+* OR
+* start with supervisord: sudo ./start_supervisord.sh \# open in browser http://SERVER_IP

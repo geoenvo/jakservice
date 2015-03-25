@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n humanize %}
 
 {% block title %}{{ page_title }}{{ block.super }}{% endblock %}
 
@@ -8,11 +8,13 @@
 {% endblock %}
 
 {% block content %}
-{% if error_invalid_date %}
+{% if errors %}
 <div class="alert alert-danger" role="alert">
     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
     <span class="sr-only">Error:</span>
-    {% trans "Please input a valid date range." %}
+    {% for error in errors %}
+        {% trans error %}
+    {% endfor %}
 </div>
 {% endif %}
 
@@ -42,7 +44,7 @@
 <div id="content" class="row mb-20">
     <div class="col-md-12">
         {% if date_range %}
-        <p>{% trans "Period:" %} {{ date_range.t0 }} - {{ date_range.t1 }}</p>
+        <p>{% trans "Period:" %} {{ date_range.t0|date:'Y-m-d H:i' }} - {{ date_range.t1|date:'Y-m-d H:i' }}</p>
         <br>
         {% endif %}
         
@@ -62,13 +64,13 @@
             <tbody>
                 {% for ac in auto_calc %}
                 <tr>
-                    <td>{{ forloop.counter {}.</td>
-                    <td>{{ ac.t1 }}</td>
-                    <td>{{ ac.t0 }}</td>
-                    <td>{{ ac.t1 }}</td>
-                    <td>{{ ac.damage }}</td>
-                    <td>{{ ac.loss }}</td>
-                    <td><a href="javascript:void(0);">Report</a> | <a href="javascript:void(0);">Shapefile</a> | <a href="javascript:void(0);">Calculation File</a></td>
+                    <td>{{ forloop.counter }}.</td>
+                    <td>{{ ac.t1|date:'Y-m-d H:i' }}</td>
+                    <td>{{ ac.t0|date:'Y-m-d H:i' }}</td>
+                    <td>{{ ac.t1|date:'Y-m-d H:i' }}</td>
+                    <td>{{ ac.damage|intcomma }}</td>
+                    <td>{{ ac.loss|intcomma }}</td>
+                    <td><a href="{{ MEDIA_URL }}" target="_blank">Report</a> | <a href="{{ MEDIA_URL }}" target="_blank">Shapefile</a> | <a href="{{ MEDIA_URL }}" target="_blank">Calculation File</a></td>
                 </tr>
                 {% endfor %}
                 <!--

@@ -158,6 +158,8 @@ def report_impact_config(request, template='report/report_impact_config.html'):
             print request.FILES['impact_class_file']
             handle_file_upload(request.FILES['impact_class_file'])
             context_dict["successes"].append("Upload successful.")
+            form = ImpactClassForm()
+            context_dict["form"] = form
         else:
             print 'DEBUG invalid form'
             form = ImpactClassForm(request.POST, request.FILES)

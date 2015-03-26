@@ -5,7 +5,7 @@ from django.conf import settings
 
 class ImpactClassForm(forms.Form):
     impact_class_file = forms.FileField(
-        label="Select a file.",
+        label="",
         help_text="Must be a CSV file.",
     )
     

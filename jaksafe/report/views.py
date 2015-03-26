@@ -1,4 +1,5 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.db import connection, transaction
@@ -9,6 +10,7 @@ import csv
 import sys
 import subprocess
 from report.forms import ImpactClassForm
+from django.contrib import messages
 
 '''
 def index(request):
@@ -157,14 +159,16 @@ def report_impact_config(request, template='report/report_impact_config.html'):
             print 'DEBUG valid form'
             print request.FILES['impact_class_file']
             handle_file_upload(request.FILES['impact_class_file'])
-            context_dict["successes"].append("Upload successful.")
-            form = ImpactClassForm()
-            context_dict["form"] = form
+            
+            messages.add_message(request, messages.SUCCESS, 'Upload successful.')
+            
+            return HttpResponseRedirect(reverse('report_impact_config'))
         else:
             print 'DEBUG invalid form'
-            form = ImpactClassForm(request.POST, request.FILES)
-            context_dict["form"] = form
-            context_dict["errors"].append("Upload failed.")
+            
+            messages.add_message(request, messages.ERROR, 'Upload failed.')
+            
+            return HttpResponseRedirect(reverse('report_impact_config'))
     else:
         form = ImpactClassForm()
         context_dict["form"] = form

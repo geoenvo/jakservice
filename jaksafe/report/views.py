@@ -8,6 +8,7 @@ import os
 import csv
 import sys
 import subprocess
+from report.forms import ImpactClassForm
 
 '''
 def index(request):
@@ -144,18 +145,44 @@ def report_adhoc(request, template='report/report_adhoc.html'):
 def report_impact_config(request, template='report/report_impact_config.html'):
     context_dict = {}
     context_dict["page_title"] = 'JakSAFE Impact Class Config'
+    context_dict["errors"] = []
+    context_dict["successes"] = []
+    context_dict["form"] = None
     
-    if (os.path.isfile(settings.IMPACT_CLASS_CONFIG) == True):
+    if request.method == "POST":
+        # handle form submit
+        form = ImpactClassForm(request.POST, request.FILES)
+        
+        if form.is_valid():
+            print 'DEBUG valid form'
+            print request.FILES['impact_class_file']
+            handle_file_upload(request.FILES['impact_class_file'])
+            context_dict["successes"].append("Upload successful.")
+        else:
+            print 'DEBUG invalid form'
+            form = ImpactClassForm(request.POST, request.FILES)
+            context_dict["form"] = form
+            context_dict["errors"].append("Upload failed.")
+    else:
+        form = ImpactClassForm()
+        context_dict["form"] = form
+        
+    print 'DEBUG %s' % settings.JAKSAFE_IMPACT_CLASS_FILEPATH
+    
+    if (os.path.isfile(settings.JAKSAFE_IMPACT_CLASS_FILEPATH) == True):
         csvlist = []
-        with open(settings.IMPACT_CLASS_CONFIG, 'rb') as csvfile:
+        with open(settings.JAKSAFE_IMPACT_CLASS_FILEPATH, 'rb') as csvfile:
             csvreader = csv.DictReader(csvfile)
             for row in csvreader:
                 csvlist.append(row)
         
         context_dict["csvlist"] = csvlist
     
-    if request.method == "POST":
-        # handle form submit
-        return HttpResponse("form submit")
-    else:
-        return render_to_response(template, RequestContext(request, context_dict))
+    #return HttpResponse("form submit")
+    
+    return render_to_response(template, RequestContext(request, context_dict))
+    
+def handle_file_upload(file_upload):
+    with open(settings.JAKSAFE_IMPACT_CLASS_FILEPATH, 'wb+') as destination:
+        for chunk in file_upload.chunks():
+            destination.write(chunk)

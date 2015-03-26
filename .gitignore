@@ -10,3 +10,4 @@ pip-selfcheck.json
 jaksafe/jaksafe/uploaded/*
 jaksafe/jaksafe/settings.py
 log/*.log
+man

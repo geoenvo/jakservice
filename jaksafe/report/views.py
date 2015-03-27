@@ -44,6 +44,7 @@ def report_auto(request, template='report/report_auto.html'):
     context_dict = {}
     context_dict["page_title"] = 'JakSAFE Automatic Report'
     context_dict["errors"] = []
+    context_dict["successes"] = []
     
     cursor = connection.cursor()
     
@@ -52,6 +53,7 @@ def report_auto(request, template='report/report_auto.html'):
         t0 = request.POST.get('t0')
         t1 = request.POST.get('t1')
         
+        # check if given date is valid, start date < end date
         date_range = valid_date(t0, t1)
         
         if (date_range != False):
@@ -65,14 +67,17 @@ def report_auto(request, template='report/report_auto.html'):
             context_dict["date_range"] = date_range
             context_dict["auto_calc"] = resultset
         else:
-            context_dict["errors"].append("Please input a valid date range.")
+            # set flash message
+            messages.add_message(request, messages.ERROR, "Please input a valid date range.")
+            
+            return HttpResponseRedirect(reverse('report_auto'))
     else:
         cursor.execute("SELECT id, t0, t1, damage, loss FROM auto_calc ORDER BY id DESC")
         
         resultset = dictfetchall(cursor)
         
         print resultset
-        print settings.PROJECT_ROOT
+        print 'DEBUG %s' % settings.PROJECT_ROOT
         
         context_dict["auto_calc"] = resultset
         
@@ -82,9 +87,11 @@ def report_adhoc(request, template='report/report_adhoc.html'):
     context_dict = {}
     context_dict["page_title"] = 'JakSAFE Ad Hoc DaLA Report'
     context_dict["errors"] = []
+    context_dict["successes"] = []
     
     cursor = connection.cursor()
     
+    # adhoc calc date range posted
     if request.method == "POST":
         # handle form submit
         t0 = request.POST.get('t0')
@@ -104,38 +111,39 @@ def report_adhoc(request, template='report/report_adhoc.html'):
             
             # only run DALA subproc if there are flood report in the period
             if flood_reports_count > 0:
-                print "DEBUG %s" % flood_reports_count
+                print "DEBUG flood reports = %s" % flood_reports_count
                 
+                #?? 20150327 no need, let jakservice do it
                 #?? create new record in adhoc_calc(t0=t0, t1=t1, damage=null, loss=null)
-                
                 ## cursor.execute("INSERT INTO adhoc_calc(t0, t1, damage, loss) VALUES ('%s', '%s', NULL, NULL)" % (date_range['t0'], date_range['t1']))
-                
                 ## transaction.commit_unless_managed()
-                
                 ## last_row_id = cursor.lastrowid
-                
                 ## print 'DEBUG last row id = %s' % last_row_id
                 
                 print 'DEBUG Executing DALA subproc!'
                 
                 #?? execute subproc adhoc_dala_script(t0, t1, new_record_id)
-                
                 ## subprocess.Popen(['/home/user/.virtualenvs/jakservice/bin/python', '/home/user/.virtualenvs/jakservice/src1/save_fl_flood_dev.py', '>>', '/home/user/.virtualenvs/jakservice/src1/output/save_fl_flood_dev.log'])
+                
+                messages.add_message(request, messages.SUCCESS, 'Adhoc calculation started. Please wait a moment.')
+            
+                return HttpResponseRedirect(reverse('report_adhoc'))
             else:
                 print 'DEBUG no flood reports found!'
-                context_dict["errors"].append("No flood reports found for period: %s - %s" % (date_range['t0'], date_range['t1']))
                 
+                #context_dict["errors"].append("No flood reports found for period: %s - %s" % (date_range['t0'], date_range['t1']))
+                
+                messages.add_message(request, messages.ERROR, "No flood reports found for period: %s - %s" % (date_range['t0'], date_range['t1']))
             
-            #?? query and return adhoc_calc context
-            cursor.execute("SELECT id, t0, t1, damage, loss FROM adhoc_calc ORDER BY id DESC")
-            resultset = dictfetchall(cursor)
-            #?? if latest adhoc_calc record damage/loss == null, set inprogress context, in template inprogress sets meta refresh in adhoc_calc template
-            
-            context_dict["adhoc_calc"] = resultset
-            
+                return HttpResponseRedirect(reverse('report_adhoc'))
         else:
-            context_dict["errors"].append("Please input a valid date range.")
+            messages.add_message(request, messages.ERROR, "Please input a valid date range.")
+            
+            return HttpResponseRedirect(reverse('report_adhoc'))
     else:
+        #?? if latest adhoc_calc record damage/loss == null, set inprogress context, in template inprogress sets meta refresh in adhoc_calc template
+        
+        #?? query and return adhoc_calc context
         cursor.execute("SELECT id, t0, t1, damage, loss FROM adhoc_calc ORDER BY id DESC")
         
         resultset = dictfetchall(cursor)
@@ -155,11 +163,15 @@ def report_impact_config(request, template='report/report_impact_config.html'):
         # handle form submit
         form = ImpactClassForm(request.POST, request.FILES)
         
+        # check if valid file type and size limit
         if form.is_valid():
             print 'DEBUG valid form'
             print request.FILES['impact_class_file']
+            
+            # write uploaded file to impact class config dir
             handle_file_upload(request.FILES['impact_class_file'])
             
+            # set flash message
             messages.add_message(request, messages.SUCCESS, 'Upload successful.')
             
             return HttpResponseRedirect(reverse('report_impact_config'))
@@ -175,20 +187,28 @@ def report_impact_config(request, template='report/report_impact_config.html'):
         
     print 'DEBUG %s' % settings.JAKSAFE_IMPACT_CLASS_FILEPATH
     
+    # read and output impact class csv file content
     if (os.path.isfile(settings.JAKSAFE_IMPACT_CLASS_FILEPATH) == True):
         csvlist = []
-        with open(settings.JAKSAFE_IMPACT_CLASS_FILEPATH, 'rb') as csvfile:
-            csvreader = csv.DictReader(csvfile)
-            for row in csvreader:
-                csvlist.append(row)
-        
-        context_dict["csvlist"] = csvlist
+        try:
+            with open(settings.JAKSAFE_IMPACT_CLASS_FILEPATH, 'rb') as csvfile:
+                csvreader = csv.DictReader(csvfile)
+                for row in csvreader:
+                    csvlist.append(row)
+            
+            context_dict["csvlist"] = csvlist
+        except IOError:
+            print 'DEBUG IO exception when reading impact class csv file'
     
     #return HttpResponse("form submit")
     
     return render_to_response(template, RequestContext(request, context_dict))
     
 def handle_file_upload(file_upload):
-    with open(settings.JAKSAFE_IMPACT_CLASS_FILEPATH, 'wb+') as destination:
-        for chunk in file_upload.chunks():
-            destination.write(chunk)
+    # overwrite existing impact clas csv file
+    try:
+        with open(settings.JAKSAFE_IMPACT_CLASS_FILEPATH, 'wb+') as destination:
+            for chunk in file_upload.chunks():
+                destination.write(chunk)
+    except IOError:
+        print 'DEBUG IO exception when writing file upload'

@@ -122,16 +122,14 @@ def report_adhoc(request, template='report/report_adhoc.html'):
                 
                 print 'DEBUG Executing DALA subproc!'
                 
-                #?? execute subproc adhoc_dala_script(t0, t1, new_record_id)
+                #?? execute subproc adhoc_dala_script(t0, t1)
                 ## subprocess.Popen(['/home/user/.virtualenvs/jakservice/bin/python', '/home/user/.virtualenvs/jakservice/src1/save_fl_flood_dev.py', '>>', '/home/user/.virtualenvs/jakservice/src1/output/save_fl_flood_dev.log'])
                 
-                messages.add_message(request, messages.SUCCESS, 'Adhoc calculation started. Please wait a moment.')
+                messages.add_message(request, messages.SUCCESS, 'Adhoc calculation started. This may take a moment.')
             
                 return HttpResponseRedirect(reverse('report_adhoc'))
             else:
                 print 'DEBUG no flood reports found!'
-                
-                #context_dict["errors"].append("No flood reports found for period: %s - %s" % (date_range['t0'], date_range['t1']))
                 
                 messages.add_message(request, messages.ERROR, "No flood reports found for period: %s - %s" % (date_range['t0'], date_range['t1']))
             
@@ -169,10 +167,13 @@ def report_impact_config(request, template='report/report_impact_config.html'):
             print request.FILES['impact_class_file']
             
             # write uploaded file to impact class config dir
-            handle_file_upload(request.FILES['impact_class_file'])
+            file_uploaded = handle_file_upload(request.FILES['impact_class_file'])
             
-            # set flash message
-            messages.add_message(request, messages.SUCCESS, 'Upload successful.')
+            if (file_uploaded == True):
+                # set flash message
+                messages.add_message(request, messages.SUCCESS, 'Upload successful.')
+            else:
+                messages.add_message(request, messages.ERROR, 'Upload failed.')
             
             return HttpResponseRedirect(reverse('report_impact_config'))
         else:
@@ -212,3 +213,6 @@ def handle_file_upload(file_upload):
                 destination.write(chunk)
     except IOError:
         print 'DEBUG IO exception when writing file upload'
+        return False
+    else:
+        return True

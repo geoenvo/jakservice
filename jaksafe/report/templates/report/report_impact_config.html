@@ -9,6 +9,7 @@
 {% block content %}
 {% if errors %}
 <div class="alert alert-danger" role="alert">
+    <a href="javascript:void(0);" class="close" data-dismiss="alert">&times;</a>
     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
     <span class="sr-only">Error:</span>
     {% for error in errors %}
@@ -19,6 +20,7 @@
 
 {% if successes %}
 <div class="alert alert-success" role="alert">
+    <a href="#" class="close" data-dismiss="alert">&times;</a>
     <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
     <span class="sr-only">Success:</span>
     {% for success in successes %}
@@ -31,12 +33,14 @@
     {% for message in messages %}
     {% if message.tags == 'success' %}
     <div class="alert alert-success" role="alert">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
         <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
         <span class="sr-only">Success:</span>
         {{ message }}
     </div>
     {% elif message.tags == 'error' %}
     <div class="alert alert-danger" role="alert">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
         <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
         <span class="sr-only">Error:</span>
         {{ message }}

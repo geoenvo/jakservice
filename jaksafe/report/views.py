@@ -25,18 +25,28 @@ def dictfetchall(cursor):
         for row in cursor.fetchall()
     ]
 
-def valid_date(t0, t1):
+def valid_date(t0, t1, adhoc=False):
     if (t0 != '' and t1 != ''):
         t0 += ' 00:00:00' # '2015-01-01 00:00:00'
         t1 += ' 23:59:59' # '2015-01-01 23:59:59'
         
-        start = datetime.strptime(t0, '%Y-%m-%d %H:%M:%S')
-        end = datetime.strptime(t1, '%Y-%m-%d %H:%M:%S')
+        start = s = end = e = None
         
-        if (t0 > t1):
+        # special format for passing to adhoc calc
+        if (adhoc == True):
+            start = datetime.strptime(t0, '%Y-%m-%d %H:%M:%S')
+            end = datetime.strptime(t1, '%Y-%m-%d %H:%M:%S')
+            s = start.strftime('%Y%m%d%H%M%S')
+            e = end.strftime('%Y%m%d%H%M%S')
+            
+        else:
+            start = datetime.strptime(t0, '%Y-%m-%d %H:%M:%S')
+            end = datetime.strptime(t1, '%Y-%m-%d %H:%M:%S')
+        
+        if (start > end):
             return False
         
-        return {'t0': start, 't1': end}
+        return {'t0': start, 't1': end, 's': s, 'e': e}
     
     return False
     
@@ -97,11 +107,12 @@ def report_adhoc(request, template='report/report_adhoc.html'):
         t0 = request.POST.get('t0')
         t1 = request.POST.get('t1')
         
-        date_range = valid_date(t0, t1)
+        date_range = valid_date(t0, t1, adhoc=True)
         
         if (date_range != False):
             # process filter
             print "DEBUG t0 = %s, t1 = %s" % (date_range['t0'], date_range['t1'])
+            print "DEBUG s = %s, e = %s" % (date_range['s'], date_range['e'])
             
             #?? query fl_event for t0 <= request_time <= t1
             cursor.execute("SELECT count(id) AS flood_reports FROM fl_event WHERE request_time >= '%s' AND request_time <= '%s'" % (date_range['t0'], date_range['t1']))

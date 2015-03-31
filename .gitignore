@@ -11,3 +11,4 @@ jaksafe/jaksafe/uploaded/*
 jaksafe/jaksafe/settings.py
 log/*.log
 man
+jaksafe/jaksafe/jakservice/*

@@ -43,13 +43,23 @@ How to deploy JakSAFE webapp on Ubuntu 14.04.
 * cp jaksafe/settings.py.sample jaksafe/settings.py
 * nano jaksafe/settings.py
     * \# adjust database connection settings
+    * \# check jakservice dirs
+    * \# check PYTHON_EXEC path
 * python manage.py migrate
 * python manage.py createsuperuser
     * \#enter admin account
 
 ### run jakSAFE sql script to create tables ###
 
+* cdvirtualenv
 * mysql -u jaksafe -p jaksafe < ./jaksafe_devfiles/jaksafe.sql
+
+### prepare jakservice  ###
+
+* cdvirtualenv
+* cd jaksafe/jaksafe/jaksafe
+* git clone git@bitbucket.org:irisiko/jakservice.git
+* \# follow jakservice README.md
 
 ### run dev server ###
 

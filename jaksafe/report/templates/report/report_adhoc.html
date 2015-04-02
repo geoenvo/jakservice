@@ -117,7 +117,7 @@
                     {% if ac.damage == None or ac.loss == None %}
                     {% trans "In Progress" %}
                     {% else %}
-                    <a href="{{ jakservice_adhoc_output_report_url }}{{ ac.t1|date:'YmdHis' }}/dala_{{ ac.t1|date:'YmdHis' }}.pdf" target="_blank">Report</a> | <a href="{{ MEDIA_URL }}" target="_blank">Shapefile</a> | <a href="{{ MEDIA_URL }}" target="_blank">Calculation File</a>
+                    <a href="{{ jakservice_adhoc_output_report_url }}{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}/dala_{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}.pdf" target="_blank">Report</a> | <a href="{{ jakservice_adhoc_output_report_url }}{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}/shapefile_{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}.zip" target="_blank">Shapefile</a> | <a href="{{ MEDIA_URL }}" target="_blank">Calculation File</a>
                     {% endif %}
                     </td>
                 </tr>

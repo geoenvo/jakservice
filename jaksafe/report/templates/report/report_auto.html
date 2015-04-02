@@ -103,7 +103,7 @@
                     <td>{{ ac.t1|date:'Y-m-d H:i' }}</td>
                     <td>{{ ac.damage|intcomma }}</td>
                     <td>{{ ac.loss|intcomma }}</td>
-                    <td><a href="{{ jakservice_auto_output_report_url }}{{ ac.t1|date:'YmdHis' }}/dala_{{ ac.t1|date:'YmdHis' }}.pdf" target="_blank">Report</a> | <a href="{{ MEDIA_URL }}" target="_blank">Shapefile</a> | <a href="{{ MEDIA_URL }}" target="_blank">Calculation File</a></td>
+                    <td><a href="{{ jakservice_auto_output_report_url }}{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}/dala_{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}.pdf" target="_blank">Report</a> | <a href="{{ jakservice_auto_output_report_url }}{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}/shapefile_{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}.zip" target="_blank">Shapefile</a> | <a href="{{ MEDIA_URL }}" target="_blank">Calculation File</a></td>
                 </tr>
                 {% endfor %}
                 <!--

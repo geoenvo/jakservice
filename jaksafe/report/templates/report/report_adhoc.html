@@ -4,7 +4,7 @@
 {% block title %}{{ page_title }}{{ block.super }}{% endblock %}
 
 {% block extra_header %}
-<link href="{{ STATIC_URL }}css/datepicker3.css" rel="stylesheet">
+<link href="{{ STATIC_URL }}css/bootstrap-datetimepicker.min.css" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -28,6 +28,13 @@
         <span class="sr-only">Success:</span>
         {{ message }}
     </div>
+    {% elif message.tags == 'info' %}
+    <div class="alert alert-info" role="alert">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <span class="glyphicon glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+        <span class="sr-only">Info:</span>
+        {{ message }}
+    </div>
     {% elif message.tags == 'error' %}
     <div class="alert alert-danger" role="alert">
         <a href="#" class="close" data-dismiss="alert">&times;</a>
@@ -47,14 +54,24 @@
 
 <div id="filter" class="row mb-20">
     <div class="col-md-12">
-        <p><strong>{% trans "Select date range" %}</strong></p>
+        <p><strong>{% trans "Select the date period to calculate DaLA" %}</strong></p>
         <form method="post" action="{% url "report_adhoc" %}" class="form-inline">
             <div class="form-group">
-                <input type="text" class="form-control datepicker" id="t0" name="t0" placeholder="{% trans "Start Date" %}">
+                <div class="input-group date datetimepicker" id="t0">
+                    <input name="t0" type="text" class="form-control" placeholder="{% trans "Start Date" %}">
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
             </div>
             <div class="form-group">
                 <label for="t1">&nbsp;&nbsp;&mdash;&nbsp;&nbsp;</label>
-                <input type="text" class="form-control datepicker" id="t1" name="t1" placeholder="{% trans "End Date" %}">
+                <div class="input-group date datetimepicker" id="t1">
+                    <input name="t1" type="text" class="form-control" placeholder="{% trans "End Date" %}">
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
             </div>
             <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
             <button type="submit" class="btn btn-default">{% trans "Generate Report" %}</button>
@@ -100,7 +117,7 @@
                     {% if ac.damage == None or ac.loss == None %}
                     {% trans "In Progress" %}
                     {% else %}
-                    <a href="{{ MEDIA_URL }}" target="_blank">Report</a> | <a href="{{ MEDIA_URL }}" target="_blank">Shapefile</a> | <a href="{{ MEDIA_URL }}" target="_blank">Calculation File</a>
+                    <a href="{{ jakservice_adhoc_output_report_url }}{{ ac.t1|date:'YmdHis' }}/dala_{{ ac.t1|date:'YmdHis' }}.pdf" target="_blank">Report</a> | <a href="{{ MEDIA_URL }}" target="_blank">Shapefile</a> | <a href="{{ MEDIA_URL }}" target="_blank">Calculation File</a>
                     {% endif %}
                     </td>
                 </tr>
@@ -157,5 +174,6 @@
 {% endblock %}
 
 {% block extra_footer %}
-<script src="{{ STATIC_URL }}js/bootstrap-datepicker.js"></script>
+<script src="{{ STATIC_URL }}js/moment.min.js"></script>
+<script src="{{ STATIC_URL }}js/bootstrap-datetimepicker.min.js"></script>
 {% endblock %}

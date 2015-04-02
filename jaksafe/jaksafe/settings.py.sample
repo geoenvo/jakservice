@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'report',
+    'django.contrib.humanize',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -97,6 +98,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'jaksafe.context_processors.resource_urls',
     'django.core.context_processors.media',
     'django.core.context_processors.static',
+    'django.contrib.messages.context_processors.messages',
 )
 
 TEMPLATE_DIRS = (
@@ -118,6 +120,37 @@ MEDIA_ROOT = os.path.join(PROJECT_ROOT, "uploaded")
 
 MEDIA_URL = '/uploaded/'
 
-IMPACT_CLASS_URL = 'config/kelas_dampak.csv'
+JAKSERVICE_ROOT = os.path.join(MEDIA_ROOT, "jakservice")
+JAKSERVICE_URL = MEDIA_URL + 'jakservice/'
+JAKSERVICE_AUTO_DIR = 'auto/'
+JAKSERVICE_ADHOC_DIR = 'adhoc/'
+JAKSERVICE_INPUT_DIR = 'input/'
+JAKSERVICE_OUTPUT_DIR = 'output/'
+JAKSERVICE_CONFIG_DIR = 'config/'
+JAKSERVICE_REPORT_DIR = 'report/'
+JAKSERVICE_HAZARD_DIR = 'hazard/'
+JAKSERVICE_IMPACT_DIR = 'impact/'
+JAKSERVICE_IMPACT_CLASS_DIR = 'kelas_dampak/'
+JAKSERVICE_IMPACT_CLASS_FILENAME = 'kelas_dampak.csv'
+JAKSERVICE_IMPACT_CLASS_URL = JAKSERVICE_URL + JAKSERVICE_AUTO_DIR + JAKSERVICE_CONFIG_DIR + JAKSERVICE_IMPACT_CLASS_DIR # /uploaded/jaksafe/auto/config/kelas_dampak/
+JAKSERVICE_AUTO_OUTPUT_URL = JAKSERVICE_URL + JAKSERVICE_AUTO_DIR + JAKSERVICE_OUTPUT_DIR # /uploaded/jaksafe/auto/output/
+JAKSERVICE_ADHOC_OUTPUT_URL = JAKSERVICE_URL + JAKSERVICE_ADHOC_DIR + JAKSERVICE_OUTPUT_DIR # /uploaded/jaksafe/adhoc/output/
+JAKSERVICE_IMPACT_CLASS_FILEPATH = os.path.join(JAKSERVICE_ROOT, JAKSERVICE_AUTO_DIR, JAKSERVICE_CONFIG_DIR, JAKSERVICE_IMPACT_CLASS_DIR, JAKSERVICE_IMPACT_CLASS_FILENAME)
 
-IMPACT_CLASS_CONFIG = os.path.join(MEDIA_ROOT, IMPACT_CLASS_URL)
+CONTENT_TYPES = ['comma-separated-values']
+
+# 1MB - 1048576
+# 2.5MB - 2621440
+# 5MB - 5242880
+# 10MB - 10485760
+# 20MB - 20971520
+# 50MB - 5242880
+# 100MB 104857600
+# 250MB - 214958080
+# 500MB - 429916160
+
+MAX_UPLOAD_SIZE = 1048576
+
+# use default python or virtualenv python
+# PYTHON_EXEC = 'python'
+PYTHON_EXEC = os.path.join(PROJECT_ROOT, "../../bin/python")

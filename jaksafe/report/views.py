@@ -27,19 +27,18 @@ def dictfetchall(cursor):
 
 def valid_date(t0, t1, adhoc=False):
     if (t0 != '' and t1 != ''):
-        t0 += ' 00:00:00' # '2015-01-01 00:00:00'
-        t1 += ' 23:59:59' # '2015-01-01 23:59:59'
-        
         start = s = end = e = None
         
         # special format for passing to adhoc calc
         if (adhoc == True):
             start = datetime.strptime(t0, '%Y-%m-%d %H:%M:%S')
             end = datetime.strptime(t1, '%Y-%m-%d %H:%M:%S')
-            s = start.strftime('%Y%m%d%H%M%S')
-            e = end.strftime('%Y%m%d%H%M%S')
+            s = start.strftime('%y%m%d%H%M%S')
+            e = end.strftime('%y%m%d%H%M%S')
             
         else:
+            t0 += ' 00:00:00' # '2015-01-01 00:00:00'
+            t1 += ' 23:59:59' # '2015-01-01 23:59:59'
             start = datetime.strptime(t0, '%Y-%m-%d %H:%M:%S')
             end = datetime.strptime(t1, '%Y-%m-%d %H:%M:%S')
         
@@ -74,11 +73,12 @@ def report_auto(request, template='report/report_auto.html'):
             
             resultset = dictfetchall(cursor)
             
-            context_dict["date_range"] = date_range
             context_dict["auto_calc"] = resultset
+            
+            messages.add_message(request, messages.INFO, "Showing reports for date period: %s - %s" % (date_range['t0'], date_range['t1']))
         else:
-            # set flash message
-            messages.add_message(request, messages.ERROR, "Please input a valid date range.")
+            # invalid date range given, set flash message and redirect
+            messages.add_message(request, messages.ERROR, "Please input a valid date period.")
             
             return HttpResponseRedirect(reverse('report_auto'))
     else:
@@ -89,6 +89,7 @@ def report_auto(request, template='report/report_auto.html'):
         print resultset
         print 'DEBUG %s' % settings.PROJECT_ROOT
         
+        context_dict["jakservice_auto_output_report_url"] = settings.JAKSERVICE_AUTO_OUTPUT_URL + settings.JAKSERVICE_REPORT_DIR
         context_dict["auto_calc"] = resultset
         
     return render_to_response(template, RequestContext(request, context_dict))
@@ -132,21 +133,35 @@ def report_adhoc(request, template='report/report_adhoc.html'):
                 ## print 'DEBUG last row id = %s' % last_row_id
                 
                 print 'DEBUG Executing DALA subproc!'
+                print os.path.dirname(os.path.abspath(__file__))
+                
+                this_script_dir = os.path.dirname(os.path.abspath(__file__))
+                jakservice_script_dir = os.path.join(this_script_dir, '../jaksafe/jakservice/')
+                
+                print jakservice_script_dir
+                
+                run_dalla_auto_script = jakservice_script_dir + 'run_dalla_auto.py'
+                run_dalla_adhoc_script = jakservice_script_dir + 'run_dalla_adhoc.py'
+                
+                print run_dalla_auto_script
                 
                 #?? execute subproc adhoc_dala_script(t0, t1)
                 ## subprocess.Popen(['/home/user/.virtualenvs/jakservice/bin/python', '/home/user/.virtualenvs/jakservice/src1/save_fl_flood_dev.py', '>>', '/home/user/.virtualenvs/jakservice/src1/output/save_fl_flood_dev.log'])
                 
-                messages.add_message(request, messages.SUCCESS, 'Adhoc calculation started. This may take a moment.')
+                #process = subprocess.Popen([settings.PYTHON_EXEC, run_dalla_adhoc_script, '-s', date_range['s'], '-e', date_range['e']])
+                
+                messages.add_message(request, messages.SUCCESS, 'Adhoc calculation started for date period [%s - %s]. This may take a moment.' % (date_range['t0'], date_range['t1']))
             
                 return HttpResponseRedirect(reverse('report_adhoc'))
             else:
                 print 'DEBUG no flood reports found!'
                 
-                messages.add_message(request, messages.ERROR, "No flood reports found for period: %s - %s" % (date_range['t0'], date_range['t1']))
+                messages.add_message(request, messages.ERROR, "No flood reports found for date period: %s - %s" % (date_range['t0'], date_range['t1']))
             
                 return HttpResponseRedirect(reverse('report_adhoc'))
         else:
-            messages.add_message(request, messages.ERROR, "Please input a valid date range.")
+            # invalid date range given, set flash message and redirect
+            messages.add_message(request, messages.ERROR, "Please input a valid date period.")
             
             return HttpResponseRedirect(reverse('report_adhoc'))
     else:
@@ -157,6 +172,7 @@ def report_adhoc(request, template='report/report_adhoc.html'):
         
         resultset = dictfetchall(cursor)
         
+        context_dict["jakservice_adhoc_output_report_url"] = settings.JAKSERVICE_ADHOC_OUTPUT_URL + settings.JAKSERVICE_REPORT_DIR
         context_dict["adhoc_calc"] = resultset
         
     return render_to_response(template, RequestContext(request, context_dict))
@@ -197,13 +213,13 @@ def report_impact_config(request, template='report/report_impact_config.html'):
         form = ImpactClassForm()
         context_dict["form"] = form
         
-    print 'DEBUG %s' % settings.JAKSAFE_IMPACT_CLASS_FILEPATH
+    print 'DEBUG %s' % settings.JAKSERVICE_IMPACT_CLASS_FILEPATH
     
     # read and output impact class csv file content
-    if (os.path.isfile(settings.JAKSAFE_IMPACT_CLASS_FILEPATH) == True):
+    if (os.path.isfile(settings.JAKSERVICE_IMPACT_CLASS_FILEPATH) == True):
         csvlist = []
         try:
-            with open(settings.JAKSAFE_IMPACT_CLASS_FILEPATH, 'rb') as csvfile:
+            with open(settings.JAKSERVICE_IMPACT_CLASS_FILEPATH, 'rb') as csvfile:
                 csvreader = csv.DictReader(csvfile)
                 for row in csvreader:
                     csvlist.append(row)
@@ -219,7 +235,7 @@ def report_impact_config(request, template='report/report_impact_config.html'):
 def handle_file_upload(file_upload):
     # overwrite existing impact clas csv file
     try:
-        with open(settings.JAKSAFE_IMPACT_CLASS_FILEPATH, 'wb+') as destination:
+        with open(settings.JAKSERVICE_IMPACT_CLASS_FILEPATH, 'wb+') as destination:
             for chunk in file_upload.chunks():
                 destination.write(chunk)
     except IOError:

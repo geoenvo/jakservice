@@ -133,22 +133,21 @@ def report_adhoc(request, template='report/report_adhoc.html'):
                 ## print 'DEBUG last row id = %s' % last_row_id
                 
                 print 'DEBUG Executing DALA subproc!'
-                print os.path.dirname(os.path.abspath(__file__))
+                ## print os.path.dirname(os.path.abspath(__file__))
                 
-                this_script_dir = os.path.dirname(os.path.abspath(__file__))
-                jakservice_script_dir = os.path.join(this_script_dir, '../jaksafe/jakservice/')
+                jakservice_script_dir = os.path.join(settings.PROJECT_ROOT, 'jakservice/')
                 
                 print jakservice_script_dir
                 
-                run_dalla_auto_script = jakservice_script_dir + 'run_dalla_auto.py'
+                ## run_dalla_auto_script = jakservice_script_dir + 'run_dalla_auto.py'
                 run_dalla_adhoc_script = jakservice_script_dir + 'run_dalla_adhoc.py'
                 
-                print run_dalla_auto_script
+                print run_dalla_adhoc_script
                 
                 #?? execute subproc adhoc_dala_script(t0, t1)
                 ## subprocess.Popen(['/home/user/.virtualenvs/jakservice/bin/python', '/home/user/.virtualenvs/jakservice/src1/save_fl_flood_dev.py', '>>', '/home/user/.virtualenvs/jakservice/src1/output/save_fl_flood_dev.log'])
                 
-                #process = subprocess.Popen([settings.PYTHON_EXEC, run_dalla_adhoc_script, '-s', date_range['s'], '-e', date_range['e']])
+                process = subprocess.Popen([settings.PYTHON_EXEC, run_dalla_adhoc_script, '-s', date_range['s'], '-e', date_range['e']])
                 
                 messages.add_message(request, messages.SUCCESS, 'Adhoc calculation started for date period [%s - %s]. This may take a moment.' % (date_range['t0'], date_range['t1']))
             

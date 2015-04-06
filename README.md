@@ -44,7 +44,7 @@ How to deploy JakSAFE webapp on Ubuntu 14.04.
 * nano jaksafe/settings.py
     * \# adjust database connection settings
     * \# check jakservice dirs
-    * \# check PYTHON_EXEC path
+    * \# check PYTHON_EXEC path (use virtualenv python binary, or system one)
 * python manage.py migrate
 * python manage.py createsuperuser
     * \#enter admin account

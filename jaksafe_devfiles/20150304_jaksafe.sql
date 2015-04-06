@@ -1,3 +1,16 @@
+CREATE TABLE `fl_event_raw`(  
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `unit` VARCHAR(255) NOT NULL,
+  `village` VARCHAR(255),
+  `district` VARCHAR(255),
+  `rt` VARCHAR(255),
+  `rw` VARCHAR(255),
+  `depth` INT UNSIGNED NOT NULL,
+  `report_time` DATETIME NOT NULL,
+  `request_time` DATETIME NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
 CREATE TABLE `fl_event`(  
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `unit` VARCHAR(255) NOT NULL,

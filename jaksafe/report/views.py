@@ -90,6 +90,7 @@ def report_auto(request, template='report/report_auto.html'):
         print 'DEBUG %s' % settings.PROJECT_ROOT
         
         context_dict["jakservice_auto_output_report_url"] = settings.JAKSERVICE_AUTO_OUTPUT_URL + settings.JAKSERVICE_REPORT_DIR
+        context_dict["jakservice_auto_output_log_url"] = settings.JAKSERVICE_AUTO_OUTPUT_URL + settings.JAKSERVICE_LOG_DIR
         context_dict["auto_calc"] = resultset
         
     return render_to_response(template, RequestContext(request, context_dict))
@@ -172,6 +173,7 @@ def report_adhoc(request, template='report/report_adhoc.html'):
         resultset = dictfetchall(cursor)
         
         context_dict["jakservice_adhoc_output_report_url"] = settings.JAKSERVICE_ADHOC_OUTPUT_URL + settings.JAKSERVICE_REPORT_DIR
+        context_dict["jakservice_adhoc_output_log_url"] = settings.JAKSERVICE_ADHOC_OUTPUT_URL + settings.JAKSERVICE_LOG_DIR
         context_dict["adhoc_calc"] = resultset
         
     return render_to_response(template, RequestContext(request, context_dict))

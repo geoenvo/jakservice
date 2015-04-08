@@ -101,9 +101,33 @@
                     <td>{{ ac.t1|date:'Y-m-d H:i' }}</td>
                     <td>{{ ac.t0|date:'Y-m-d H:i' }}</td>
                     <td>{{ ac.t1|date:'Y-m-d H:i' }}</td>
-                    <td>{{ ac.damage|intcomma }}</td>
-                    <td>{{ ac.loss|intcomma }}</td>
-                    <td><a href="{{ jakservice_auto_output_report_url }}{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}/dala_{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}.pdf" target="_blank">Report</a> | <a href="{{ jakservice_auto_output_report_url }}{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}/shapefile_{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}.zip" target="_blank">Shapefile</a> | <a href="{{ jakservice_auto_output_report_url }}{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}/calculation_{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}.zip" target="_blank">Calculation File</a></td>
+                    <td>
+                    {% if ac.damage == None %}
+                    {% trans "In Progress" %}
+                    {% elif ac.damage == -999 and ac.damage == -999 %}
+                    {% trans "Error" %}
+                    {% else %}
+                    {{ ac.damage|intcomma }}
+                    {% endif %}
+                    </td>
+                    <td>
+                    {% if ac.loss == None %}
+                    {% trans "In Progress" %}
+                    {% elif ac.loss == -999 and ac.damage == -999 %}
+                    {% trans "Error" %}
+                    {% else %}
+                    {{ ac.loss|intcomma }}
+                    {% endif %}
+                    </td>
+                    <td>
+                    {% if ac.damage == None or ac.loss == None %}
+                    {% trans "In Progress" %}
+                    {% elif ac.loss == -999 and ac.damage == -999  %}
+                    <a href="{{ jakservice_auto_output_log_url }}dala_{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}.log" target="_blank">{% trans "Log" %}</a>
+                    {% else %}
+                    <a href="{{ jakservice_auto_output_report_url }}{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}/dala_{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}.pdf" target="_blank">{% trans "Report" %}</a> | <a href="{{ jakservice_auto_output_report_url }}{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}/shapefile_{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}.zip" target="_blank">{% trans "Shapefile" %}</a> | <a href="{{ jakservice_auto_output_report_url }}{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}/calculation_{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}.zip" target="_blank">{% trans "Calculation File" %}</a>
+                    {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
                 <!--

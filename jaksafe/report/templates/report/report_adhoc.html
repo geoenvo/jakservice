@@ -86,8 +86,8 @@
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>{% trans "Start Date" %}</th>
-                    <th>{% trans "End Date" %}</th>
+                    <th>{% trans "Start Date (t0)" %}</th>
+                    <th>{% trans "End Date (t1)" %}</th>
                     <th>{% trans "Estimated Damage" %}</th>
                     <th>{% trans "Estimated Loss" %}</th>
                     <th>{% trans "Result" %}</th>
@@ -123,7 +123,7 @@
                     {% elif ac.loss == -999 and ac.damage == -999  %}
                     <a href="{{ jakservice_adhoc_output_log_url }}dala_{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}.log" target="_blank">{% trans "Log" %}</a>
                     {% else %}
-                    <a href="{{ jakservice_adhoc_output_report_url }}{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}/dala_{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}.pdf" target="_blank">{% trans "Report" %}</a> | <a href="{{ jakservice_adhoc_output_report_url }}{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}/shapefile_{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}.zip" target="_blank">{% trans "Shapefile" %}</a> | <a href="{{ jakservice_adhoc_output_report_url }}{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}/calculation_{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}.zip" target="_blank">{% trans "Calculation" %}</a>
+                    <a href="{{ jakservice_adhoc_output_report_url }}{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}/dala_{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}.pdf" target="_blank">{% trans "Report" %}</a> | <a href="{{ jakservice_adhoc_output_report_url }}{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}/shapefile_{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}.zip" target="_blank">{% trans "Shapefile" %}</a> | <a href="{{ jakservice_adhoc_output_report_url }}{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}/calculation_{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}.zip" target="_blank">{% trans "Calculation" %}</a> | <a href="{{ jakservice_adhoc_output_log_url }}dala_{{ ac.t0|date:'YmdHis' }}_{{ ac.t1|date:'YmdHis' }}.log" target="_blank">{% trans "Log" %}</a>
                     {% endif %}
                     </td>
                 </tr>

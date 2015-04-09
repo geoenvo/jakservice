@@ -9,7 +9,7 @@ import os
 import csv
 import sys
 import subprocess
-from report.forms import ImpactClassForm
+from report.forms import ImpactClassForm, AggregateForm, AssumptionsDamageForm, AssumptionsLossForm, AssumptionsAggregateForm, AssumptionsInsuranceForm, AssumptionsInsurancePenetrationForm
 from django.contrib import messages
 
 '''
@@ -195,7 +195,7 @@ def report_impact_config(request, template='report/report_impact_config.html'):
             print request.FILES['impact_class_file']
             
             # write uploaded file to impact class config dir
-            file_uploaded = handle_file_upload(request.FILES['impact_class_file'])
+            file_uploaded = handle_impact_config_upload(request.FILES['impact_class_file'])
             
             if (file_uploaded == True):
                 # set flash message
@@ -233,10 +233,287 @@ def report_impact_config(request, template='report/report_impact_config.html'):
     
     return render_to_response(template, RequestContext(request, context_dict))
     
-def handle_file_upload(file_upload):
-    # overwrite existing impact clas csv file
+def handle_impact_config_upload(file_upload):
+    # overwrite existing impact class csv file
     try:
         with open(settings.JAKSERVICE_IMPACT_CLASS_FILEPATH, 'wb+') as destination:
+            for chunk in file_upload.chunks():
+                destination.write(chunk)
+    except IOError:
+        print 'DEBUG IO exception when writing file upload'
+        return False
+    else:
+        return True
+
+def report_assumptions_config(request, template='report/report_assumptions_config.html'):
+    context_dict = {}
+    context_dict["page_title"] = 'JakSAFE Assumptions Config'
+    context_dict["errors"] = []
+    context_dict["successes"] = []
+    context_dict["form"] = None
+    
+    if request.method == "POST":
+        # handle form submit
+        form_damage = AssumptionsDamageForm(request.POST, request.FILES)
+        form_loss = AssumptionsLossForm(request.POST, request.FILES)
+        form_aggregate = AssumptionsAggregateForm(request.POST, request.FILES)
+        form_insurance = AssumptionsInsuranceForm(request.POST, request.FILES)
+        form_insurance_penetration = AssumptionsInsurancePenetrationForm(request.POST, request.FILES)
+        
+        if u'assumptions_damage_file' in request.FILES:
+            if form_damage.is_valid():
+                file_type = 'assumptions_damage_file'
+                
+                print 'DEBUG valid form'
+                print request.FILES[file_type]
+                
+                file_uploaded = handle_assumptions_config_upload(request.FILES[file_type], type=file_type)
+                
+                if (file_uploaded == True):
+                    messages.add_message(request, messages.SUCCESS, "'Assumptions Damage' upload successful.")
+                else:
+                    messages.add_message(request, messages.ERROR, "'Assumptions Damage' upload failed.")
+            else:
+                messages.add_message(request, messages.ERROR, "'Assumptions Damage' upload failed.")
+        
+        if u'assumptions_loss_file' in request.FILES:
+            if form_loss.is_valid():
+                file_type = 'assumptions_loss_file'
+                
+                print 'DEBUG valid form'
+                print request.FILES[file_type]
+                
+                file_uploaded = handle_assumptions_config_upload(request.FILES[file_type], type=file_type)
+                
+                if (file_uploaded == True):
+                    messages.add_message(request, messages.SUCCESS, "'Assumptions Loss' upload successful.")
+                else:
+                    messages.add_message(request, messages.ERROR, "'Assumptions Loss' upload failed.")
+            else:
+                messages.add_message(request, messages.ERROR, "'Assumptions Loss' upload failed.")
+        
+        if u'assumptions_aggregate_file' in request.FILES:
+            if form_aggregate.is_valid():
+                file_type = 'assumptions_aggregate_file'
+                
+                print 'DEBUG valid form'
+                print request.FILES[file_type]
+                
+                file_uploaded = handle_assumptions_config_upload(request.FILES[file_type], type=file_type)
+                
+                if (file_uploaded == True):
+                    messages.add_message(request, messages.SUCCESS, "'Assumptions Aggregate' upload successful.")
+                else:
+                    messages.add_message(request, messages.ERROR, "'Assumptions Aggregate' upload failed.")
+            else:
+                messages.add_message(request, messages.ERROR, "'Assumptions Aggregate' upload failed.")
+        
+        if u'assumptions_insurance_file' in request.FILES:
+            if form_insurance.is_valid():
+                file_type = 'assumptions_insurance_file'
+                
+                print 'DEBUG valid form'
+                print request.FILES[file_type]
+                
+                file_uploaded = handle_assumptions_config_upload(request.FILES[file_type], type=file_type)
+                
+                if (file_uploaded == True):
+                    messages.add_message(request, messages.SUCCESS, "'Assumptions Insurance' upload successful.")
+                else:
+                    messages.add_message(request, messages.ERROR, "'Assumptions Insurance' upload failed.")
+            else:
+                messages.add_message(request, messages.ERROR, "'Assumptions Insurance' upload failed.")
+        
+        if u'assumptions_insurance_penetration_file' in request.FILES:    
+            if form_insurance_penetration.is_valid():
+                file_type = 'assumptions_insurance_penetration_file'
+                
+                print 'DEBUG valid form'
+                print request.FILES[file_type]
+                
+                file_uploaded = handle_assumptions_config_upload(request.FILES[file_type], type=file_type)
+                
+                if (file_uploaded == True):
+                    messages.add_message(request, messages.SUCCESS, "'Assumptions Insurance Penetration' upload successful.")
+                else:
+                    messages.add_message(request, messages.ERROR, "'Assumptions Insurance Penetration' upload failed.")
+            else:
+                messages.add_message(request, messages.ERROR, "'Assumptions Insurance Penetration' upload failed.")
+        
+        return HttpResponseRedirect(reverse('report_assumptions_config'))
+    else:
+        assumptions_damage_form = AssumptionsDamageForm()
+        context_dict["assumptions_damage_form"] = assumptions_damage_form
+        
+        assumptions_loss_form = AssumptionsLossForm()
+        context_dict["assumptions_loss_form"] = assumptions_loss_form
+        
+        assumptions_aggregate_form = AssumptionsAggregateForm()
+        context_dict["assumptions_aggregate_form"] = assumptions_aggregate_form
+        
+        assumptions_insurance_form = AssumptionsInsuranceForm()
+        context_dict["assumptions_insurance_form"] = assumptions_insurance_form
+        
+        assumptions_insurance_penetration_form = AssumptionsInsurancePenetrationForm()
+        context_dict["assumptions_insurance_penetration_form"] = assumptions_insurance_penetration_form
+    
+    # read and output assumptions damage csv file content
+    if (os.path.isfile(settings.JAKSERVICE_ASSUMPTIONS_DAMAGE_FILEPATH) == True):
+        try:
+            csvlist = []
+            with open(settings.JAKSERVICE_ASSUMPTIONS_DAMAGE_FILEPATH, 'rb') as csvfile:
+                csvreader = csv.DictReader(csvfile)
+                for row in csvreader:
+                    csvlist.append(row)
+            
+            context_dict["assumptions_damage_csv"] = csvlist
+        except IOError:
+            print 'DEBUG IO exception when reading assumptions damage csv file'
+    
+    # read and output assumptions loss csv file content
+    if (os.path.isfile(settings.JAKSERVICE_ASSUMPTIONS_LOSS_FILEPATH) == True):
+        try:
+            csvlist = []
+            with open(settings.JAKSERVICE_ASSUMPTIONS_LOSS_FILEPATH, 'rb') as csvfile:
+                csvreader = csv.DictReader(csvfile)
+                for row in csvreader:
+                    csvlist.append(row)
+            
+            context_dict["assumptions_loss_csv"] = csvlist
+        except IOError:
+            print 'DEBUG IO exception when reading assumptions loss csv file'
+    
+    # read and output assumptions aggregate csv file content
+    if (os.path.isfile(settings.JAKSERVICE_ASSUMPTIONS_AGGREGATE_FILEPATH) == True):
+        try:
+            csvlist = []
+            with open(settings.JAKSERVICE_ASSUMPTIONS_AGGREGATE_FILEPATH, 'rb') as csvfile:
+                csvreader = csv.DictReader(csvfile)
+                for row in csvreader:
+                    csvlist.append(row)
+            
+            context_dict["assumptions_aggregate_csv"] = csvlist
+        except IOError:
+            print 'DEBUG IO exception when reading assumptions loss csv file'
+    
+    # read and output assumptions insurance csv file content
+    if (os.path.isfile(settings.JAKSERVICE_ASSUMPTIONS_INSURANCE_FILEPATH) == True):
+        try:
+            csvlist = []
+            with open(settings.JAKSERVICE_ASSUMPTIONS_INSURANCE_FILEPATH, 'rb') as csvfile:
+                csvreader = csv.DictReader(csvfile)
+                for row in csvreader:
+                    csvlist.append(row)
+            
+            context_dict["assumptions_insurance_csv"] = csvlist
+        except IOError:
+            print 'DEBUG IO exception when reading assumptions insurance csv file'
+    
+    # read and output assumptions insurance penetration csv file content
+    if (os.path.isfile(settings.JAKSERVICE_ASSUMPTIONS_INSURANCE_PENETRATION_FILEPATH) == True):
+        try:
+            csvlist = []
+            with open(settings.JAKSERVICE_ASSUMPTIONS_INSURANCE_PENETRATION_FILEPATH, 'rb') as csvfile:
+                csvreader = csv.DictReader(csvfile)
+                for row in csvreader:
+                    csvlist.append(row)
+            
+            context_dict["assumptions_insurance_penetration_csv"] = csvlist
+        except IOError:
+            print 'DEBUG IO exception when reading assumptions insurance penetration csv file'
+    
+    #return HttpResponse("form submit")
+    
+    return render_to_response(template, RequestContext(request, context_dict))
+
+def handle_assumptions_config_upload(file_upload, type):
+    # overwrite existing aggregate csv file
+    try:
+        upload_path = None
+        
+        if type == 'assumptions_damage_file':
+            upload_path = settings.JAKSERVICE_ASSUMPTIONS_DAMAGE_FILEPATH
+        elif type == 'assumptions_loss_file':
+            upload_path = settings.JAKSERVICE_ASSUMPTIONS_LOSS_FILEPATH
+        elif type == 'assumptions_aggregate_file':
+            upload_path = settings.JAKSERVICE_ASSUMPTIONS_AGGREGATE_FILEPATH
+        elif type == 'assumptions_insurance_file':
+            upload_path = settings.JAKSERVICE_ASSUMPTIONS_INSURANCE_FILEPATH
+        elif type == 'assumptions_insurance_penetration_file':
+            upload_path = settings.JAKSERVICE_ASSUMPTIONS_INSURANCE_PENETRATION_FILEPATH
+        
+        if upload_path == None:
+            return False
+        
+        with open(upload_path, 'wb+') as destination:
+            for chunk in file_upload.chunks():
+                destination.write(chunk)
+        
+    except IOError:
+        print 'DEBUG IO exception when writing file upload'
+        return False
+    else:
+        return True
+
+def report_aggregate_config(request, template='report/report_aggregate_config.html'):
+    context_dict = {}
+    context_dict["page_title"] = 'JakSAFE Aggregate Config'
+    context_dict["errors"] = []
+    context_dict["successes"] = []
+    context_dict["form"] = None
+    
+    if request.method == "POST":
+        # handle form submit
+        form = AggregateForm(request.POST, request.FILES)
+        
+        # check if valid file type and size limit
+        if form.is_valid():
+            print 'DEBUG valid form'
+            print request.FILES['aggregate_file']
+            
+            # write uploaded file to assumptions config dir
+            file_uploaded = handle_aggregate_config_upload(request.FILES['aggregate_file'])
+            
+            if (file_uploaded == True):
+                # set flash message
+                messages.add_message(request, messages.SUCCESS, 'Upload successful.')
+            else:
+                messages.add_message(request, messages.ERROR, 'Upload failed.')
+            
+            return HttpResponseRedirect(reverse('report_aggregate_config'))
+        else:
+            print 'DEBUG invalid form'
+            
+            messages.add_message(request, messages.ERROR, 'Upload failed.')
+            
+            return HttpResponseRedirect(reverse('report_aggregate_config'))
+    else:
+        form = AggregateForm()
+        context_dict["form"] = form
+        
+    print 'DEBUG %s' % settings.JAKSERVICE_AGGREGATE_FILEPATH
+    
+    # read and output impact class csv file content
+    if (os.path.isfile(settings.JAKSERVICE_AGGREGATE_FILEPATH) == True):
+        csvlist = []
+        try:
+            with open(settings.JAKSERVICE_AGGREGATE_FILEPATH, 'rb') as csvfile:
+                csvreader = csv.DictReader(csvfile)
+                for row in csvreader:
+                    csvlist.append(row)
+            
+            context_dict["csvlist"] = csvlist
+        except IOError:
+            print 'DEBUG IO exception when reading aggregate csv file'
+    
+    #return HttpResponse("form submit")
+    
+    return render_to_response(template, RequestContext(request, context_dict))
+
+def handle_aggregate_config_upload(file_upload):
+    # overwrite existing aggregate csv file
+    try:
+        with open(settings.JAKSERVICE_AGGREGATE_FILEPATH, 'wb+') as destination:
             for chunk in file_upload.chunks():
                 destination.write(chunk)
     except IOError:

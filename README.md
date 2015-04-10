@@ -64,7 +64,7 @@
 * cdvirtualenv
 * mysql -u jaksafe -p jaksafe < ./jaksafe_etc/jaksafe.sql
 
-**Prepare JakSERVICE**
+**Configure JakSERVICE repo**
 
 * cdvirtualenv
 * cd jaksafe/jaksafe/jakservice

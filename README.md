@@ -1,22 +1,24 @@
 # README #
+###Deploying JakSAFE webapp on Ubuntu 14.04###
 
-How to deploy JakSAFE webapp on Ubuntu 14.04.
+**Install base libraries and virtualenv (Python Virtual Environment)**
 
-### install requirements and create virtualenv ###
-
+* cd ~
 * sudo apt-get update
-* sudo apt-get -y install build-essential python-pip python-dev python-software-properties git-core vim screen
+* /# install the base libraries
+* sudo apt-get -y install build-essential python-pip python-dev python-software-properties git-core
 * sudo pip install virtualenv virtualenvwrapper
 * nano ~/.bashrc
-    * \# add to end
+    * \# add to the end
     * export WORKON_HOME=$HOME/.virtualenvs
     * source /usr/local/bin/virtualenvwrapper.sh
 * . .bashrc
 
-### install mysql ###
+**Install MySQL database server**
 
 * sudo apt-get -y install mysql-server libmysqlclient-dev
-    * \# set root password
+    * \# follow MySQL configuration and set the root user password
+* \# create the MySQL user and database for JakSAFE from MySQL CLI
 * mysql -u root -p
     * create database jaksafe;
     * grant all privileges on jaksafe.* to 'jaksafe'@'localhost' identified by 'password';
@@ -24,45 +26,72 @@ How to deploy JakSAFE webapp on Ubuntu 14.04.
     * flush privileges;
     * exit;
 
-### create virtualenv and track repo ###
+**Create a new virtualenv and pull the source code from the JakSAFE repo**
 
+* \# create a new virtualenv called ‘jaksafe’
 * mkvirtualenv jaksafe
+* \# cd to the virtualenv home directory
 * cdvirtualenv
+* pwd
+* \# default path is: ~/.virtualenvs/jaksafe/
+* \# initialize a new git repo and pull the source code
 * git init
-* git remote add origin git@bitbucket.org:irisiko/jaksafe.git
+* git remote add origin https://irisiko@bitbucket.org/irisiko/jaksafe.git
 * git fetch
 * git checkout -t origin/master
 
-### install python packages in virtualenv ###
+**Install the Python package requirements in the virtualenv**
 
 * pip install -r requirements.txt
+* \# wait until installation completes
+* \# verify that the packages are installed
+* pip list
 
-### sync database ###
+**Sync the JakSAFE webapp database**
 
 * cd jaksafe
 * cp jaksafe/settings.py.sample jaksafe/settings.py
 * nano jaksafe/settings.py
-    * \# adjust database connection settings
-    * \# check jakservice dirs
-    * \# check PYTHON_EXEC path (use virtualenv python binary, or system one)
+    * \# adjust the MySQL database connection settings in DATABASES
+    * \# adjust the jakservice dirs (use the default)
+    * \# check PYTHON_EXEC path (default is to use the ‘JakSAFE’ virtualenv Python binary)
 * python manage.py migrate
 * python manage.py createsuperuser
-    * \#enter admin account
+    * \# create the admin account
 
-### run jakSAFE sql script to create tables ###
-
-* cdvirtualenv
-* mysql -u jaksafe -p jaksafe < ./jaksafe_devfiles/jaksafe.sql
-
-### prepare jakservice  ###
+**Run the JakSAFE SQL script to create the required tables**
 
 * cdvirtualenv
-* cd jaksafe/jaksafe/jaksafe
-* git clone git@bitbucket.org:irisiko/jakservice.git
-* \# follow jakservice README.md
+* mysql -u jaksafe -p jaksafe < ./jaksafe_etc/jaksafe.sql
 
-### run dev server ###
+**Prepare JakSERVICE**
 
-* python manage.py runserver 0.0.0.0:8000 \# open in browser http://SERVER_IP:8000
-* OR
-* start with supervisord: sudo ./start_supervisord.sh \# open in browser http://SERVER_IP
+* cdvirtualenv
+* cd jaksafe/jaksafe/jakservice
+* git init
+* git remote add origin https://irisiko@bitbucket.org/irisiko/jakservice.git
+* git fetch
+* git checkout -f -t origin/master
+* \# complete the JakSERVICE deployment steps before running the web server (refer to jakservice/README.md)
+
+**Optional: install phpMyAdmin for managing the MySQL database**
+
+* \# install phpMyAdmin set it to listen on port 8080
+* sudo apt-get -y install phpmyadmin
+* sudo php5enmod mcrypt
+* sudo nano /etc/apache2/ports.conf
+    * \# add below Listen 80: Listen 8080
+    * \# comment: Listen 80 (example: #Listen 80)
+* sudo service apache2 restart
+* \# open in browser http://SERVER_IP:8080/phpmyadmin
+
+**Run the web server**
+
+* \# run the dev web server
+* python manage.py runserver 0.0.0.0:8000
+* \# open in browser http://SERVER_IP:8000
+* \# OR run the web server with Supervisor
+* sudo ./start_supervisord.sh
+* \# OR run Gunicorn web server directly
+* sudo ./start_server.sh
+* \# open in browser http://SERVER_IP

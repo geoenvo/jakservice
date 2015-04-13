@@ -9,7 +9,7 @@ import os
 import csv
 import sys
 import subprocess
-from report.forms import ImpactClassForm, AggregateForm, AssumptionsDamageForm, AssumptionsLossForm, AssumptionsAggregateForm, AssumptionsInsuranceForm, AssumptionsInsurancePenetrationForm
+from report.forms import ImpactClassForm, AggregateForm, AssumptionsDamageForm, AssumptionsLossForm, AssumptionsAggregateForm, AssumptionsInsuranceForm, AssumptionsInsurancePenetrationForm, BoundaryForm, BuildingExposureForm, RoadExposureForm
 from django.contrib import messages
 
 '''
@@ -218,6 +218,8 @@ def report_impact_config(request, template='report/report_impact_config.html'):
     
     # read and output impact class csv file content
     if (os.path.isfile(settings.JAKSERVICE_IMPACT_CLASS_FILEPATH) == True):
+        context_dict["impact_class_download_url"] = settings.JAKSERVICE_IMPACT_CLASS_URL + settings.JAKSERVICE_IMPACT_CLASS_FILENAME
+        
         csvlist = []
         try:
             with open(settings.JAKSERVICE_IMPACT_CLASS_FILEPATH, 'rb') as csvfile:
@@ -359,6 +361,8 @@ def report_assumptions_config(request, template='report/report_assumptions_confi
     
     # read and output assumptions damage csv file content
     if (os.path.isfile(settings.JAKSERVICE_ASSUMPTIONS_DAMAGE_FILEPATH) == True):
+        context_dict["assumptions_damage_download_url"] = settings.JAKSERVICE_ASSUMPTIONS_URL + settings.JAKSERVICE_ASSUMPTIONS_DAMAGE_FILENAME
+        
         try:
             csvlist = []
             with open(settings.JAKSERVICE_ASSUMPTIONS_DAMAGE_FILEPATH, 'rb') as csvfile:
@@ -372,6 +376,8 @@ def report_assumptions_config(request, template='report/report_assumptions_confi
     
     # read and output assumptions loss csv file content
     if (os.path.isfile(settings.JAKSERVICE_ASSUMPTIONS_LOSS_FILEPATH) == True):
+        context_dict["assumptions_loss_download_url"] = settings.JAKSERVICE_ASSUMPTIONS_URL + settings.JAKSERVICE_ASSUMPTIONS_LOSS_FILENAME
+        
         try:
             csvlist = []
             with open(settings.JAKSERVICE_ASSUMPTIONS_LOSS_FILEPATH, 'rb') as csvfile:
@@ -385,6 +391,8 @@ def report_assumptions_config(request, template='report/report_assumptions_confi
     
     # read and output assumptions aggregate csv file content
     if (os.path.isfile(settings.JAKSERVICE_ASSUMPTIONS_AGGREGATE_FILEPATH) == True):
+        context_dict["assumptions_aggregate_download_url"] = settings.JAKSERVICE_ASSUMPTIONS_URL + settings.JAKSERVICE_ASSUMPTIONS_AGGREGATE_FILENAME
+        
         try:
             csvlist = []
             with open(settings.JAKSERVICE_ASSUMPTIONS_AGGREGATE_FILEPATH, 'rb') as csvfile:
@@ -398,6 +406,8 @@ def report_assumptions_config(request, template='report/report_assumptions_confi
     
     # read and output assumptions insurance csv file content
     if (os.path.isfile(settings.JAKSERVICE_ASSUMPTIONS_INSURANCE_FILEPATH) == True):
+        context_dict["assumptions_insurance_download_url"] = settings.JAKSERVICE_ASSUMPTIONS_URL + settings.JAKSERVICE_ASSUMPTIONS_INSURANCE_FILENAME
+        
         try:
             csvlist = []
             with open(settings.JAKSERVICE_ASSUMPTIONS_INSURANCE_FILEPATH, 'rb') as csvfile:
@@ -411,6 +421,8 @@ def report_assumptions_config(request, template='report/report_assumptions_confi
     
     # read and output assumptions insurance penetration csv file content
     if (os.path.isfile(settings.JAKSERVICE_ASSUMPTIONS_INSURANCE_PENETRATION_FILEPATH) == True):
+        context_dict["assumptions_insurance_penetration_download_url"] = settings.JAKSERVICE_ASSUMPTIONS_URL + settings.JAKSERVICE_ASSUMPTIONS_INSURANCE_PENETRATION_FILENAME
+        
         try:
             csvlist = []
             with open(settings.JAKSERVICE_ASSUMPTIONS_INSURANCE_PENETRATION_FILEPATH, 'rb') as csvfile:
@@ -495,6 +507,8 @@ def report_aggregate_config(request, template='report/report_aggregate_config.ht
     
     # read and output impact class csv file content
     if (os.path.isfile(settings.JAKSERVICE_AGGREGATE_FILEPATH) == True):
+        context_dict["aggregate_download_url"] = settings.JAKSERVICE_AGGREGATE_URL + settings.JAKSERVICE_AGGREGATE_FILENAME
+        
         csvlist = []
         try:
             with open(settings.JAKSERVICE_AGGREGATE_FILEPATH, 'rb') as csvfile:
@@ -516,6 +530,219 @@ def handle_aggregate_config_upload(file_upload):
         with open(settings.JAKSERVICE_AGGREGATE_FILEPATH, 'wb+') as destination:
             for chunk in file_upload.chunks():
                 destination.write(chunk)
+    except IOError:
+        print 'DEBUG IO exception when writing file upload'
+        return False
+    else:
+        return True
+
+def report_boundary_config(request, template='report/report_boundary_config.html'):
+    context_dict = {}
+    context_dict["page_title"] = 'JakSAFE Boundary Config'
+    context_dict["errors"] = []
+    context_dict["successes"] = []
+    context_dict["form"] = None
+    
+    if request.method == "POST":
+        # handle form submit
+        form_boundary = BoundaryForm(request.POST, request.FILES)
+        
+        if form_boundary.is_valid():
+            print 'DEBUG valid form'
+            
+            shp_file_uploaded = handle_boundary_config_upload(request.FILES['boundary_shp_file'], settings.JAKSERVICE_BOUNDARY_SHP_FILEPATH)
+            shx_file_uploaded = handle_boundary_config_upload(request.FILES['boundary_shx_file'], settings.JAKSERVICE_BOUNDARY_SHX_FILEPATH)
+            dbf_file_uploaded = handle_boundary_config_upload(request.FILES['boundary_dbf_file'], settings.JAKSERVICE_BOUNDARY_DBF_FILEPATH)
+            prj_file_uploaded = handle_boundary_config_upload(request.FILES['boundary_prj_file'], settings.JAKSERVICE_BOUNDARY_PRJ_FILEPATH)
+            qpj_file_uploaded = handle_boundary_config_upload(request.FILES['boundary_qpj_file'], settings.JAKSERVICE_BOUNDARY_QPJ_FILEPATH)
+            
+            if (shp_file_uploaded == True):
+                messages.add_message(request, messages.SUCCESS, "'Boundary SHP' upload successful.")
+            else:
+                messages.add_message(request, messages.ERROR, "'Boundary SHP' upload failed.")
+            
+            if (shx_file_uploaded == True):
+                messages.add_message(request, messages.SUCCESS, "'Boundary SHX' upload successful.")
+            else:
+                messages.add_message(request, messages.ERROR, "'Boundary SHX' upload failed.")
+            
+            if (dbf_file_uploaded == True):
+                messages.add_message(request, messages.SUCCESS, "'Boundary DBF' upload successful.")
+            else:
+                messages.add_message(request, messages.ERROR, "'Boundary DBF' upload failed.")
+            
+            if (prj_file_uploaded == True):
+                messages.add_message(request, messages.SUCCESS, "'Boundary PRJ' upload successful.")
+            else:
+                messages.add_message(request, messages.ERROR, "'Boundary PRJ' upload failed.")
+            
+            if (qpj_file_uploaded == True):
+                messages.add_message(request, messages.SUCCESS, "'Boundary QPJ' upload successful.")
+            else:
+                messages.add_message(request, messages.ERROR, "'Boundary QPJ' upload failed.")
+        else:
+            messages.add_message(request, messages.ERROR, "Boundary upload failed. Please upload the SHP, SHX, DBF, PRJ, and QPJ file set.")
+        
+        return HttpResponseRedirect(reverse('report_boundary_config'))
+    else:
+        context_dict["form"]  = BoundaryForm()
+        
+        if (os.path.isfile(settings.JAKSERVICE_BOUNDARY_SHP_FILEPATH) == True):
+            context_dict["shp_download_url"]  = settings.JAKSERVICE_BOUNDARY_URL + settings.JAKSERVICE_BOUNDARY_SHP_FILENAME
+        
+        if (os.path.isfile(settings.JAKSERVICE_BOUNDARY_SHX_FILEPATH) == True):
+            context_dict["shx_download_url"]  = settings.JAKSERVICE_BOUNDARY_URL + settings.JAKSERVICE_BOUNDARY_SHX_FILENAME
+        
+        if (os.path.isfile(settings.JAKSERVICE_BOUNDARY_DBF_FILEPATH) == True):
+            context_dict["dbf_download_url"]  = settings.JAKSERVICE_BOUNDARY_URL + settings.JAKSERVICE_BOUNDARY_DBF_FILENAME
+        
+        if (os.path.isfile(settings.JAKSERVICE_BOUNDARY_PRJ_FILEPATH) == True):
+            context_dict["prj_download_url"]  = settings.JAKSERVICE_BOUNDARY_URL + settings.JAKSERVICE_BOUNDARY_PRJ_FILENAME
+        
+        if (os.path.isfile(settings.JAKSERVICE_BOUNDARY_QPJ_FILEPATH) == True):
+            context_dict["qpj_download_url"]  = settings.JAKSERVICE_BOUNDARY_URL + settings.JAKSERVICE_BOUNDARY_QPJ_FILENAME
+    
+    return render_to_response(template, RequestContext(request, context_dict))
+
+def handle_boundary_config_upload(file_upload, upload_path):
+    try:
+        with open(upload_path, 'wb+') as destination:
+            for chunk in file_upload.chunks():
+                destination.write(chunk)
+        
+    except IOError:
+        print 'DEBUG IO exception when writing file upload'
+        return False
+    else:
+        return True
+
+def report_exposure_config(request, template='report/report_exposure_config.html'):
+    context_dict = {}
+    context_dict["page_title"] = 'JakSAFE Exposure Config'
+    context_dict["errors"] = []
+    context_dict["successes"] = []
+    context_dict["form"] = None
+    
+    if request.method == "POST":
+        # handle form submit
+        form_building_exposure = BuildingExposureForm(request.POST, request.FILES)
+        form_road_exposure = RoadExposureForm(request.POST, request.FILES)
+        
+        if form_building_exposure.is_valid():
+            print 'DEBUG valid form'
+            
+            shp_file_uploaded = handle_exposure_config_upload(request.FILES['building_exposure_shp_file'], settings.JAKSERVICE_BUILDING_EXPOSURE_SHP_FILEPATH)
+            shx_file_uploaded = handle_exposure_config_upload(request.FILES['building_exposure_shx_file'], settings.JAKSERVICE_BUILDING_EXPOSURE_SHX_FILEPATH)
+            dbf_file_uploaded = handle_exposure_config_upload(request.FILES['building_exposure_dbf_file'], settings.JAKSERVICE_BUILDING_EXPOSURE_DBF_FILEPATH)
+            prj_file_uploaded = handle_exposure_config_upload(request.FILES['building_exposure_prj_file'], settings.JAKSERVICE_BUILDING_EXPOSURE_PRJ_FILEPATH)
+            qpj_file_uploaded = handle_exposure_config_upload(request.FILES['building_exposure_qpj_file'], settings.JAKSERVICE_BUILDING_EXPOSURE_QPJ_FILEPATH)
+            
+            if (shp_file_uploaded == True):
+                messages.add_message(request, messages.SUCCESS, "'Building Exposure SHP' upload successful.")
+            else:
+                messages.add_message(request, messages.ERROR, "'Building Exposure SHP' upload failed.")
+            
+            if (shx_file_uploaded == True):
+                messages.add_message(request, messages.SUCCESS, "'Building Exposure SHX' upload successful.")
+            else:
+                messages.add_message(request, messages.ERROR, "'Building Exposure SHX' upload failed.")
+            
+            if (dbf_file_uploaded == True):
+                messages.add_message(request, messages.SUCCESS, "'Building Exposure DBF' upload successful.")
+            else:
+                messages.add_message(request, messages.ERROR, "'Building Exposure DBF' upload failed.")
+            
+            if (prj_file_uploaded == True):
+                messages.add_message(request, messages.SUCCESS, "'Building Exposure PRJ' upload successful.")
+            else:
+                messages.add_message(request, messages.ERROR, "'Building Exposure PRJ' upload failed.")
+            
+            if (qpj_file_uploaded == True):
+                messages.add_message(request, messages.SUCCESS, "'Building Exposure QPJ' upload successful.")
+            else:
+                messages.add_message(request, messages.ERROR, "'Building Exposure QPJ' upload failed.")
+        else:
+            messages.add_message(request, messages.ERROR, "Building Exposure upload failed. Please upload the SHP, SHX, DBF, PRJ, and QPJ file set.")
+        
+        if form_road_exposure.is_valid():
+            print 'DEBUG valid form'
+            
+            shp_file_uploaded = handle_exposure_config_upload(request.FILES['road_exposure_shp_file'], settings.JAKSERVICE_ROAD_EXPOSURE_SHP_FILEPATH)
+            shx_file_uploaded = handle_exposure_config_upload(request.FILES['road_exposure_shx_file'], settings.JAKSERVICE_ROAD_EXPOSURE_SHX_FILEPATH)
+            dbf_file_uploaded = handle_exposure_config_upload(request.FILES['road_exposure_dbf_file'], settings.JAKSERVICE_ROAD_EXPOSURE_DBF_FILEPATH)
+            prj_file_uploaded = handle_exposure_config_upload(request.FILES['road_exposure_prj_file'], settings.JAKSERVICE_ROAD_EXPOSURE_PRJ_FILEPATH)
+            qpj_file_uploaded = handle_exposure_config_upload(request.FILES['road_exposure_qpj_file'], settings.JAKSERVICE_ROAD_EXPOSURE_QPJ_FILEPATH)
+            
+            if (shp_file_uploaded == True):
+                messages.add_message(request, messages.SUCCESS, "'Road Exposure SHP' upload successful.")
+            else:
+                messages.add_message(request, messages.ERROR, "'Road Exposure SHP' upload failed.")
+            
+            if (shx_file_uploaded == True):
+                messages.add_message(request, messages.SUCCESS, "'Road Exposure SHX' upload successful.")
+            else:
+                messages.add_message(request, messages.ERROR, "'Road Exposure SHX' upload failed.")
+            
+            if (dbf_file_uploaded == True):
+                messages.add_message(request, messages.SUCCESS, "'Road Exposure DBF' upload successful.")
+            else:
+                messages.add_message(request, messages.ERROR, "'Road Exposure DBF' upload failed.")
+            
+            if (prj_file_uploaded == True):
+                messages.add_message(request, messages.SUCCESS, "'Road Exposure PRJ' upload successful.")
+            else:
+                messages.add_message(request, messages.ERROR, "'Road Exposure PRJ' upload failed.")
+            
+            if (qpj_file_uploaded == True):
+                messages.add_message(request, messages.SUCCESS, "'Road Exposure QPJ' upload successful.")
+            else:
+                messages.add_message(request, messages.ERROR, "'Road Exposure QPJ' upload failed.")
+        else:
+            messages.add_message(request, messages.ERROR, "Road Exposure upload failed. Please upload the SHP, SHX, DBF, PRJ, and QPJ file set.")
+        
+        return HttpResponseRedirect(reverse('report_exposure_config'))
+    else:
+        context_dict["building_exposure_form"]  = BuildingExposureForm()
+        context_dict["road_exposure_form"]  = RoadExposureForm()
+        
+        if (os.path.isfile(settings.JAKSERVICE_BUILDING_EXPOSURE_SHP_FILEPATH) == True):
+            context_dict["building_exposure_shp_download_url"]  = settings.JAKSERVICE_EXPOSURE_URL + settings.JAKSERVICE_BUILDING_EXPOSURE_SHP_FILENAME
+        
+        if (os.path.isfile(settings.JAKSERVICE_BUILDING_EXPOSURE_SHX_FILEPATH) == True):
+            context_dict["building_exposure_shx_download_url"]  = settings.JAKSERVICE_EXPOSURE_URL + settings.JAKSERVICE_BUILDING_EXPOSURE_SHX_FILENAME
+        
+        if (os.path.isfile(settings.JAKSERVICE_BUILDING_EXPOSURE_DBF_FILEPATH) == True):
+            context_dict["building_exposure_dbf_download_url"]  = settings.JAKSERVICE_EXPOSURE_URL + settings.JAKSERVICE_BUILDING_EXPOSURE_DBF_FILENAME
+        
+        if (os.path.isfile(settings.JAKSERVICE_BUILDING_EXPOSURE_PRJ_FILEPATH) == True):
+            context_dict["building_exposure_prj_download_url"]  = settings.JAKSERVICE_EXPOSURE_URL + settings.JAKSERVICE_BUILDING_EXPOSURE_PRJ_FILENAME
+        
+        if (os.path.isfile(settings.JAKSERVICE_BUILDING_EXPOSURE_QPJ_FILEPATH) == True):
+            context_dict["building_exposure_qpj_download_url"]  = settings.JAKSERVICE_EXPOSURE_URL + settings.JAKSERVICE_BUILDING_EXPOSURE_QPJ_FILENAME
+        
+        if (os.path.isfile(settings.JAKSERVICE_ROAD_EXPOSURE_SHP_FILEPATH) == True):
+            context_dict["road_exposure_shp_download_url"]  = settings.JAKSERVICE_EXPOSURE_URL + settings.JAKSERVICE_ROAD_EXPOSURE_SHP_FILENAME
+        
+        if (os.path.isfile(settings.JAKSERVICE_ROAD_EXPOSURE_SHX_FILEPATH) == True):
+            context_dict["road_exposure_shx_download_url"]  = settings.JAKSERVICE_EXPOSURE_URL + settings.JAKSERVICE_ROAD_EXPOSURE_SHX_FILENAME
+        
+        if (os.path.isfile(settings.JAKSERVICE_ROAD_EXPOSURE_DBF_FILEPATH) == True):
+            context_dict["road_exposure_dbf_download_url"]  = settings.JAKSERVICE_EXPOSURE_URL + settings.JAKSERVICE_ROAD_EXPOSURE_DBF_FILENAME
+        
+        if (os.path.isfile(settings.JAKSERVICE_ROAD_EXPOSURE_PRJ_FILEPATH) == True):
+            context_dict["road_exposure_prj_download_url"]  = settings.JAKSERVICE_EXPOSURE_URL + settings.JAKSERVICE_ROAD_EXPOSURE_PRJ_FILENAME
+        
+        if (os.path.isfile(settings.JAKSERVICE_ROAD_EXPOSURE_QPJ_FILEPATH) == True):
+            context_dict["road_exposure_qpj_download_url"]  = settings.JAKSERVICE_EXPOSURE_URL + settings.JAKSERVICE_ROAD_EXPOSURE_QPJ_FILENAME
+    
+    return render_to_response(template, RequestContext(request, context_dict))
+
+def handle_exposure_config_upload(file_upload, upload_path):
+    try:
+        with open(upload_path, 'wb+') as destination:
+            for chunk in file_upload.chunks():
+                destination.write(chunk)
+        
     except IOError:
         print 'DEBUG IO exception when writing file upload'
         return False

@@ -7,4 +7,6 @@ urlpatterns = patterns('',
     url(r'^impact_config/$', views.report_impact_config, name='report_impact_config'),
     url(r'^assumptions_config/$', views.report_assumptions_config, name='report_assumptions_config'),
     url(r'^aggregate_config/$', views.report_aggregate_config, name='report_aggregate_config'),
+    url(r'^boundary_config/$', views.report_boundary_config, name='report_boundary_config'),
+    url(r'^exposure_config/$', views.report_exposure_config, name='report_exposure_config'),
 )

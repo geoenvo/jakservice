@@ -59,7 +59,7 @@
     <div class="col-md-12">
         <p><strong>{% trans "Upload Aggregate Config File" %}</strong></p>
         <p>{{ form.aggregate_file.label_tag }} {{ form.aggregate_file.help_text }}</p>
-        <form method="post" enctype="multipart/form-data" action="{% url "report_aggregate_config" %}" class="form-inline">
+        <form method="post" enctype="multipart/form-data" action="{% url "report_aggregate_config" %}">
             <div class="form-group">
                 
                 {{ form.non_field_errors }}
@@ -69,7 +69,7 @@
             </div>
             <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
             <button type="submit" class="btn btn-default">{% trans "Upload" %}</button>
-            <a class="btn btn-default" href="{{ JAKSERVICE_AGGREGATE_URL }}{{ JAKSERVICE_AGGREGATE_FILENAME }}" target="_blank">{% trans "Download This Config" %}</a>
+            {% if aggregate_download_url %} <a class="btn btn-default" href="{{ aggregate_download_url }}" target="_blank">{% trans "Download This Config" %}</a>{% endif %}
         </form>
     </div>
 </div>

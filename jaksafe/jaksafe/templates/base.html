@@ -34,9 +34,11 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{% trans "Settings" %} <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
-                            {% url "report_impact_config" as report_impact_config_url %}<li {% if request.get_full_path == report_impact_config_url %}class="active"{% endif %}><a href="{% url "report_impact_config" %}">{% trans "Impact Class Config" %}</a></li>
+                            {% url "report_impact_config" as report_impact_config_url %}<li {% if request.get_full_path == report_impact_config_url %}class="active"{% endif %}><a href="{% url "report_impact_config" %}">{% trans "Impact Class" %}</a></li>
                             {% url "report_assumptions_config" as report_assumptions_config_url %}<li {% if request.get_full_path == report_assumptions_config_url %}class="active"{% endif %}><a href="{% url "report_assumptions_config" %}">{% trans "Assumptions" %}</a></li>
                             {% url "report_aggregate_config" as report_aggregate_config_url %}<li {% if request.get_full_path == report_aggregate_config_url %}class="active"{% endif %}><a href="{% url "report_aggregate_config" %}">{% trans "Aggregate" %}</a></li>
+                            {% url "report_boundary_config" as report_boundary_config_url %}<li {% if request.get_full_path == report_boundary_config_url %}class="active"{% endif %}><a href="{% url "report_boundary_config" %}">{% trans "Boundary" %}</a></li>
+                            {% url "report_exposure_config" as report_exposure_config_url %}<li {% if request.get_full_path == report_exposure_config_url %}class="active"{% endif %}><a href="{% url "report_exposure_config" %}">{% trans "Exposure" %}</a></li>
                         </ul>
                     </li>
                 </ul>

@@ -72,8 +72,7 @@
             </div>
             <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
             <button type="submit" class="btn btn-default">{% trans "Upload" %}</button>
-            <a class="btn btn-default" href="{{ JAKSERVICE_ASSUMPTIONS_URL }}{{ JAKSERVICE_ASSUMPTIONS_DAMAGE_FILENAME }}" target="_blank">{% trans "Download This Config" %}</a>
-        
+            {% if assumptions_damage_download_url %} <a class="btn btn-default" href="{{ assumptions_damage_download_url }}" target="_blank">{% trans "Download This Config" %}</a>{% endif %}
     </div>
 </div>
 
@@ -152,7 +151,7 @@
             </div>
             <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
             <button type="submit" class="btn btn-default">{% trans "Upload" %}</button>
-            <a class="btn btn-default" href="{{ JAKSERVICE_ASSUMPTIONS_URL }}{{ JAKSERVICE_ASSUMPTIONS_LOSS_FILENAME }}" target="_blank">{% trans "Download This Config" %}</a>
+            {% if assumptions_loss_download_url %} <a class="btn btn-default" href="{{ assumptions_loss_download_url }}" target="_blank">{% trans "Download This Config" %}</a>{% endif %}
         
     </div>
 </div>
@@ -232,7 +231,7 @@
             </div>
             <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
             <button type="submit" class="btn btn-default">{% trans "Upload" %}</button>
-            <a class="btn btn-default" href="{{ JAKSERVICE_ASSUMPTIONS_URL }}{{ JAKSERVICE_ASSUMPTIONS_AGGREGATE_FILENAME }}" target="_blank">{% trans "Download This Config" %}</a>
+            {% if assumptions_aggregate_download_url %} <a class="btn btn-default" href="{{ assumptions_aggregate_download_url }}" target="_blank">{% trans "Download This Config" %}</a>{% endif %}
         
     </div>
 </div>
@@ -292,7 +291,7 @@
             </div>
             <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
             <button type="submit" class="btn btn-default">{% trans "Upload" %}</button>
-            <a class="btn btn-default" href="{{ JAKSERVICE_ASSUMPTIONS_URL }}{{ JAKSERVICE_ASSUMPTIONS_INSURANCE_FILENAME }}" target="_blank">{% trans "Download This Config" %}</a>
+            {% if assumptions_insurance_download_url %} <a class="btn btn-default" href="{{ assumptions_insurance_download_url }}" target="_blank">{% trans "Download This Config" %}</a>{% endif %}
         
     </div>
 </div>
@@ -340,7 +339,7 @@
             </div>
             <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
             <button type="submit" class="btn btn-default">{% trans "Upload" %}</button>
-            <a class="btn btn-default" href="{{ JAKSERVICE_ASSUMPTIONS_URL }}{{ JAKSERVICE_ASSUMPTIONS_INSURANCE_PENETRATION_FILENAME }}" target="_blank">{% trans "Download This Config" %}</a>
+            {% if assumptions_insurance_penetration_download_url %} <a class="btn btn-default" href="{{ assumptions_insurance_penetration_download_url }}" target="_blank">{% trans "Download This Config" %}</a>{% endif %}
 
     </div>
 </div>

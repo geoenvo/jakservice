@@ -9,7 +9,7 @@ import os
 import csv
 import sys
 import subprocess
-from report.forms import ImpactClassForm, AggregateForm, AssumptionsDamageForm, AssumptionsLossForm, AssumptionsAggregateForm, AssumptionsInsuranceForm, AssumptionsInsurancePenetrationForm, BoundaryForm, BuildingExposureForm, RoadExposureForm
+from report.forms import ImpactClassForm, AggregateForm, AssumptionsDamageForm, AssumptionsLossForm, AssumptionsAggregateForm, AssumptionsInsuranceForm, AssumptionsInsurancePenetrationForm, BoundaryForm, BuildingExposureForm, RoadExposureForm, GlobalConfigForm
 from django.contrib import messages
 
 '''
@@ -738,6 +738,55 @@ def report_exposure_config(request, template='report/report_exposure_config.html
     return render_to_response(template, RequestContext(request, context_dict))
 
 def handle_exposure_config_upload(file_upload, upload_path):
+    try:
+        with open(upload_path, 'wb+') as destination:
+            for chunk in file_upload.chunks():
+                destination.write(chunk)
+        
+    except IOError:
+        print 'DEBUG IO exception when writing file upload'
+        return False
+    else:
+        return True
+
+def report_global_config(request, template='report/report_global_config.html'):
+    context_dict = {}
+    context_dict["page_title"] = 'JakSAFE Global Config'
+    context_dict["errors"] = []
+    context_dict["successes"] = []
+    context_dict["form"] = None
+    
+    if request.method == "POST":
+        # handle form submit
+        form_global_config = GlobalConfigForm(request.POST, request.FILES)
+        
+        if form_global_config.is_valid():
+            print 'DEBUG valid form'
+            
+            global_config_file_uploaded = handle_global_config_upload(request.FILES['global_config_file'], settings.JAKSERVICE_GLOBAL_CONFIG_FILEPATH)
+            
+            if (global_config_file_uploaded == True):
+                messages.add_message(request, messages.SUCCESS, "'Global Config' upload successful.")
+            else:
+                messages.add_message(request, messages.ERROR, "'Global Config' upload failed.")
+        else:
+            messages.add_message(request, messages.ERROR, "Global Config upload failed.")
+        
+        return HttpResponseRedirect(reverse('report_global_config'))
+    else:
+        context_dict["form"]  = GlobalConfigForm()
+        
+        if (os.path.isfile(settings.JAKSERVICE_GLOBAL_CONFIG_FILEPATH) == True):
+            try:
+                with open(settings.JAKSERVICE_GLOBAL_CONFIG_FILEPATH) as fhandle:
+                    context_dict["global_config"] = fhandle.read()
+            except IOError:
+                print 'DEBUG IO exception when reading file'
+                pass
+    
+    return render_to_response(template, RequestContext(request, context_dict))
+
+def handle_global_config_upload(file_upload, upload_path):
     try:
         with open(upload_path, 'wb+') as destination:
             for chunk in file_upload.chunks():

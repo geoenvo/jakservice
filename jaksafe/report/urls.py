@@ -9,4 +9,5 @@ urlpatterns = patterns('',
     url(r'^aggregate_config/$', views.report_aggregate_config, name='report_aggregate_config'),
     url(r'^boundary_config/$', views.report_boundary_config, name='report_boundary_config'),
     url(r'^exposure_config/$', views.report_exposure_config, name='report_exposure_config'),
+    url(r'^global_config/$', views.report_global_config, name='report_global_config'),
 )

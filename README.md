@@ -95,3 +95,9 @@
 * \# OR run Gunicorn web server directly
 * sudo ./start_server.sh
 * \# open in browser http://SERVER_IP
+
+**Set the web server to always run on server startup**
+
+*sudo crontab -e
+    * \# add the following entry
+    * @reboot /path/to/virtualenv/dir/start_server.sh &

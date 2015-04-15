@@ -48,6 +48,75 @@ def valid_date(t0, t1, adhoc=False):
         return {'t0': start, 't1': end, 's': s, 'e': e}
     
     return False
+
+def report_flood(request, template='report/report_flood.html'):
+    context_dict = {}
+    context_dict["page_title"] = 'JakSAFE Flood Reports'
+    context_dict["errors"] = []
+    context_dict["successes"] = []
+    
+    records_per_page = settings.RECORDS_PER_PAGE
+    
+    cursor = connection.cursor()
+    
+    if request.method == "POST":
+        # handle form submit
+        t0 = request.POST.get('t0')
+        t1 = request.POST.get('t1')
+        
+        # check if given date is valid, start date < end date
+        date_range = valid_date(t0, t1, adhoc=True)
+        
+        if (date_range != False):
+            # process filter
+            print "DEBUG t0 = %s, t1 = %s" % (date_range['t0'], date_range['t1'])
+            
+            cursor.execute("SELECT unit, village, district, rt, rw, depth, report_time, request_time FROM fl_event WHERE report_time >= '%s' AND report_time <= '%s' ORDER BY report_time DESC" % (date_range['t0'], date_range['t1']))
+            
+            resultset = dictfetchall(cursor)
+            
+            context_dict["fl_event"] = resultset
+            
+            messages.add_message(request, messages.INFO, "Showing reports for date period: %s - %s" % (date_range['t0'], date_range['t1']))
+        else:
+            # invalid date range given, set flash message and redirect
+            messages.add_message(request, messages.ERROR, "Please input a valid date period.")
+            
+            return HttpResponseRedirect(reverse('report_auto'))
+    else:
+        cursor.execute("SELECT count(id) FROM fl_event")
+        row = cursor.fetchone()
+        
+        records_total = row[0]
+        
+        page = 0
+        offset = 0
+        
+        p = request.GET.get('page', False)
+        
+        if p != False and p.isdigit():
+            print 'DEBUG p = %s' % p
+            page = int(p)
+            offset = records_per_page * (page)
+        
+        records_left = records_total - (records_per_page * (page + 1))
+        
+        print 'DEBUG total records = %s' % records_total
+        print 'DEBUG page = %s' % page
+        print 'DEBUG offset = %s' % offset
+        print 'DEBUG records_left = %s' % records_left
+        print 'DEBUG records_per_page = %s' % records_per_page
+        
+        cursor.execute("SELECT unit, village, district, rt, rw, depth, report_time, request_time FROM fl_event ORDER BY report_time DESC LIMIT %s, %s" % (offset, records_per_page))
+        
+        resultset = dictfetchall(cursor)
+        
+        context_dict["page"] = page
+        context_dict["records_left"] = records_left
+        context_dict["records_per_page"] = records_per_page
+        context_dict["fl_event"] = resultset
+        
+    return render_to_response(template, RequestContext(request, context_dict))
     
 def report_auto(request, template='report/report_auto.html'):
     context_dict = {}

@@ -98,9 +98,9 @@
                 {% for ac in auto_calc %}
                 <tr>
                     <td>{{ forloop.counter }}.</td>
-                    <td>{{ ac.t1|date:'Y-m-d H:i' }}</td>
-                    <td>{{ ac.t0|date:'Y-m-d H:i' }}</td>
-                    <td>{{ ac.t1|date:'Y-m-d H:i' }}</td>
+                    <td>{{ ac.t1|date:'Y-m-d H:i:s' }}</td>
+                    <td>{{ ac.t0|date:'Y-m-d H:i:s' }}</td>
+                    <td>{{ ac.t1|date:'Y-m-d H:i:s' }}</td>
                     <td>
                     {% if ac.damage == None %}
                     {% trans "In Progress" %}

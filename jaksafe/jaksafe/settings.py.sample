@@ -211,3 +211,5 @@ MAX_UPLOAD_SIZE = 1048576
 # use default python or virtualenv python
 # PYTHON_EXEC = 'python'
 PYTHON_EXEC = os.path.join(PROJECT_ROOT, "../../bin/python")
+
+RECORDS_PER_PAGE = 50

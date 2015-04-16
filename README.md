@@ -98,9 +98,11 @@
 * \# OR run Gunicorn web server directly
 * sudo ./start_server.sh
 * \# open in browser http://SERVER_IP
+* \# to stop the web server (Gunicorn):
+    * sudo pkill gunicorn
 
 **Set the web server to always run on server startup**
 
 * sudo crontab -e
     * \# add the following entry
-    * \@@reboot /path/to/jaksafe/virtualenv/dir/start_server.sh &
+    * @@reboot /path/to/jaksafe/virtualenv/dir/start_server.sh &

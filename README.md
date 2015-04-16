@@ -106,3 +106,5 @@
 * sudo crontab -e
     * \# add the following entry
     * @@reboot /path/to/jaksafe/virtualenv/dir/start_server.sh &
+
+**Done!**

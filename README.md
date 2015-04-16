@@ -83,8 +83,8 @@
         * \# Yes => enter root user password => leave blank
 * sudo php5enmod mcrypt
 * sudo nano /etc/apache2/ports.conf
-    * \# add below Listen 80: Listen 8080
     * \# comment: Listen 80 (example: #Listen 80)
+    * \# add below Listen 80: Listen 8080
 * sudo service apache2 restart
 * \# open in browser http://SERVER_IP:8080/phpmyadmin
 

@@ -78,6 +78,9 @@
 
 * \# install phpMyAdmin set it to listen on port 8080
 * sudo apt-get -y install phpmyadmin
+    * \# during phpMyAdmin setup select:
+        * \# apache2
+        * \# Yes => enter root user password => leave blank
 * sudo php5enmod mcrypt
 * sudo nano /etc/apache2/ports.conf
     * \# add below Listen 80: Listen 8080

@@ -17,6 +17,16 @@ def index(request):
     return HttpResponse("Hello world!")
 '''
 
+def get_delimiter(csv_file):
+    with open(csv_file, 'r') as the_csv_file:
+        header = the_csv_file.readline()
+        if header.find(";") != -1:
+            return ";"
+        if header.find(",") != -1:
+            return ","
+    # default MS Office export
+    return ";"
+
 def dictfetchall(cursor):
     "Returns all rows from a cursor as a dict"
     desc = cursor.description
@@ -291,8 +301,10 @@ def report_impact_config(request, template='report/report_impact_config.html'):
         
         csvlist = []
         try:
+            delimiter = get_delimiter(settings.JAKSERVICE_IMPACT_CLASS_FILEPATH)
+            
             with open(settings.JAKSERVICE_IMPACT_CLASS_FILEPATH, 'rb') as csvfile:
-                csvreader = csv.DictReader(csvfile)
+                csvreader = csv.DictReader(csvfile, delimiter=delimiter)
                 for row in csvreader:
                     csvlist.append(row)
             
@@ -434,8 +446,10 @@ def report_assumptions_config(request, template='report/report_assumptions_confi
         
         try:
             csvlist = []
+            delimiter = get_delimiter(settings.JAKSERVICE_ASSUMPTIONS_DAMAGE_FILEPATH)
+            
             with open(settings.JAKSERVICE_ASSUMPTIONS_DAMAGE_FILEPATH, 'rb') as csvfile:
-                csvreader = csv.DictReader(csvfile)
+                csvreader = csv.DictReader(csvfile, delimiter=delimiter)
                 for row in csvreader:
                     csvlist.append(row)
             
@@ -449,8 +463,10 @@ def report_assumptions_config(request, template='report/report_assumptions_confi
         
         try:
             csvlist = []
+            delimiter = get_delimiter(settings.JAKSERVICE_ASSUMPTIONS_LOSS_FILEPATH)
+            
             with open(settings.JAKSERVICE_ASSUMPTIONS_LOSS_FILEPATH, 'rb') as csvfile:
-                csvreader = csv.DictReader(csvfile)
+                csvreader = csv.DictReader(csvfile, delimiter=delimiter)
                 for row in csvreader:
                     csvlist.append(row)
             
@@ -464,8 +480,10 @@ def report_assumptions_config(request, template='report/report_assumptions_confi
         
         try:
             csvlist = []
+            delimiter = get_delimiter(settings.JAKSERVICE_ASSUMPTIONS_AGGREGATE_FILEPATH)
+            
             with open(settings.JAKSERVICE_ASSUMPTIONS_AGGREGATE_FILEPATH, 'rb') as csvfile:
-                csvreader = csv.DictReader(csvfile)
+                csvreader = csv.DictReader(csvfile, delimiter=delimiter)
                 for row in csvreader:
                     csvlist.append(row)
             
@@ -479,8 +497,10 @@ def report_assumptions_config(request, template='report/report_assumptions_confi
         
         try:
             csvlist = []
+            delimiter = get_delimiter(settings.JAKSERVICE_ASSUMPTIONS_INSURANCE_FILEPATH)
+            
             with open(settings.JAKSERVICE_ASSUMPTIONS_INSURANCE_FILEPATH, 'rb') as csvfile:
-                csvreader = csv.DictReader(csvfile)
+                csvreader = csv.DictReader(csvfile, delimiter=delimiter)
                 for row in csvreader:
                     csvlist.append(row)
             
@@ -494,8 +514,10 @@ def report_assumptions_config(request, template='report/report_assumptions_confi
         
         try:
             csvlist = []
+            delimiter = get_delimiter(settings.JAKSERVICE_ASSUMPTIONS_INSURANCE_PENETRATION_FILEPATH)
+            
             with open(settings.JAKSERVICE_ASSUMPTIONS_INSURANCE_PENETRATION_FILEPATH, 'rb') as csvfile:
-                csvreader = csv.DictReader(csvfile)
+                csvreader = csv.DictReader(csvfile, delimiter=delimiter)
                 for row in csvreader:
                     csvlist.append(row)
             
@@ -580,8 +602,10 @@ def report_aggregate_config(request, template='report/report_aggregate_config.ht
         
         csvlist = []
         try:
+            delimiter = get_delimiter(settings.JAKSERVICE_AGGREGATE_FILEPATH)
+            
             with open(settings.JAKSERVICE_AGGREGATE_FILEPATH, 'rb') as csvfile:
-                csvreader = csv.DictReader(csvfile)
+                csvreader = csv.DictReader(csvfile, delimiter=delimiter)
                 for row in csvreader:
                     csvlist.append(row)
             

@@ -56,18 +56,34 @@
 </div>
 
 <div id="content" class="row mb-20">
-    <div class="col-md-12">
-        <form method="post" action="{% url "report_login" %}">
-            <div class="form-group">
-                <input name="username" type="text">
-                <input name="password" type="password">
-                {% if next %}
-                <input name="next" type="hidden" value="{{ next }}">
-                {% endif %}
+    <div class="col-md-4 col-md-offset-4">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <form method="post" action="{% url "report_login" %}" class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="username" class="col-sm-3 control-label"><span class="glyphicon glyphicon-user"></label>
+                        <div class="col-sm-9">
+                            <input id="username" name="username" class="form-control" placeholder="Username" required="" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="col-sm-3 control-label"><span class="glyphicon glyphicon-lock"></span></label>
+                        <div class="col-sm-9">
+                            <input id="password" name="password" class="form-control" placeholder="Password" required="" type="password">
+                        </div>
+                    </div>
+                    <div class="form-group last">
+                        <div class="col-sm-offset-3 col-sm-9">
+                            <button type="submit" class="btn btn-default">{% trans "Login" %}</button>
+                        </div>
+                    </div>
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                    {% if next %}
+                    <input name="next" type="hidden" value="{{ next }}">
+                    {% endif %}
+                </form>
             </div>
-            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-            <button type="submit" class="btn btn-default">{% trans "Login" %}</button>
-        </form>
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -11,11 +11,59 @@ import sys
 import subprocess
 from report.forms import ImpactClassForm, AggregateForm, AssumptionsDamageForm, AssumptionsLossForm, AssumptionsAggregateForm, AssumptionsInsuranceForm, AssumptionsInsurancePenetrationForm, BoundaryForm, BuildingExposureForm, RoadExposureForm, GlobalConfigForm
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+
 
 '''
 def index(request):
     return HttpResponse("Hello world!")
 '''
+
+def report_login(request, template='report/report_login.html'):
+    context_dict = {}
+    context_dict["page_title"] = 'JakSAFE Login'
+    context_dict["errors"] = []
+    context_dict["successes"] = []
+    
+    if request.method == "GET":  
+        next = request.GET.get('next')
+        context_dict["next"] = next
+    
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        user = authenticate(username=username, password=password)
+        
+        if user:
+            if user.is_active:
+                login(request, user)
+                
+                # get next from hidden input
+                next = request.POST.get('next')
+                
+                if next:
+                    return HttpResponseRedirect(next)
+                else:
+                    return HttpResponseRedirect(reverse('report_auto'))
+            else:
+                messages.add_message(request, messages.ERROR, "User is not active. Please contact the Administrator.")
+                
+                return HttpResponseRedirect(reverse('report_login'))
+        else:
+            messages.add_message(request, messages.ERROR, "Invalid user login. Please try again.")
+            
+            return HttpResponseRedirect(reverse('report_login'))
+    else:
+        return render_to_response(template, RequestContext(request, context_dict))
+
+@login_required
+def report_logout(request):
+    logout(request)
+    
+    return HttpResponseRedirect(reverse('report_auto'))
+
 
 def get_delimiter(csv_file):
     with open(csv_file, 'r') as the_csv_file:
@@ -43,8 +91,8 @@ def valid_date(t0, t1, adhoc=False):
         if (adhoc == True):
             start = datetime.strptime(t0, '%Y-%m-%d %H:%M:%S')
             end = datetime.strptime(t1, '%Y-%m-%d %H:%M:%S')
-            s = start.strftime('%y%m%d%H%M%S')
-            e = end.strftime('%y%m%d%H%M%S')
+            s = start.strftime('%Y%m%d%H%M%S')
+            e = end.strftime('%Y%m%d%H%M%S')
             
         else:
             t0 += ' 00:00:00' # '2015-01-01 00:00:00'
@@ -183,7 +231,7 @@ def report_adhoc(request, template='report/report_adhoc.html'):
     cursor = connection.cursor()
     
     # adhoc calc date range posted
-    if request.method == "POST":
+    if request.method == "POST" and request.user.is_authenticated():
         # handle form submit
         t0 = request.POST.get('t0')
         t1 = request.POST.get('t1')
@@ -257,6 +305,7 @@ def report_adhoc(request, template='report/report_adhoc.html'):
         
     return render_to_response(template, RequestContext(request, context_dict))
 
+@login_required
 def report_impact_config(request, template='report/report_impact_config.html'):
     context_dict = {}
     context_dict["page_title"] = 'JakSAFE Impact Class Config'
@@ -328,6 +377,7 @@ def handle_impact_config_upload(file_upload):
     else:
         return True
 
+@login_required
 def report_assumptions_config(request, template='report/report_assumptions_config.html'):
     context_dict = {}
     context_dict["page_title"] = 'JakSAFE Assumptions Config'
@@ -558,6 +608,7 @@ def handle_assumptions_config_upload(file_upload, type):
     else:
         return True
 
+@login_required
 def report_aggregate_config(request, template='report/report_aggregate_config.html'):
     context_dict = {}
     context_dict["page_title"] = 'JakSAFE Aggregate Config'
@@ -629,6 +680,7 @@ def handle_aggregate_config_upload(file_upload):
     else:
         return True
 
+@login_required
 def report_boundary_config(request, template='report/report_boundary_config.html'):
     context_dict = {}
     context_dict["page_title"] = 'JakSAFE Boundary Config'
@@ -709,6 +761,7 @@ def handle_boundary_config_upload(file_upload, upload_path):
     else:
         return True
 
+@login_required
 def report_exposure_config(request, template='report/report_exposure_config.html'):
     context_dict = {}
     context_dict["page_title"] = 'JakSAFE Exposure Config'
@@ -842,6 +895,7 @@ def handle_exposure_config_upload(file_upload, upload_path):
     else:
         return True
 
+@login_required
 def report_global_config(request, template='report/report_global_config.html'):
     context_dict = {}
     context_dict["page_title"] = 'JakSAFE Global Config'

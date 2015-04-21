@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ page_title }}{{ block.super }}{% endblock %}
+
+{% block extra_header %}
+{% endblock %}
+
+{% block content %}
+{% if errors %}
+<div class="alert alert-danger" role="alert">
+    <a href="javascript:void(0);" class="close" data-dismiss="alert">&times;</a>
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+    <span class="sr-only">Error:</span>
+    {% for error in errors %}
+        {% trans error %}
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if successes %}
+<div class="alert alert-success" role="alert">
+    <a href="#" class="close" data-dismiss="alert">&times;</a>
+    <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
+    <span class="sr-only">Success:</span>
+    {% for success in successes %}
+        {% trans success %}
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if messages %}
+    {% for message in messages %}
+    {% if message.tags == 'success' %}
+    <div class="alert alert-success" role="alert">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
+        <span class="sr-only">Success:</span>
+        {{ message }}
+    </div>
+    {% elif message.tags == 'error' %}
+    <div class="alert alert-danger" role="alert">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span class="sr-only">Error:</span>
+        {{ message }}
+    </div>
+    {% endif %}
+    {% endfor %}
+{% endif %}
+
+<div id="heading" id="" class="row mb-20">
+    <div class="col-md-12">
+        <h3>{{ page_title }}</h3>
+    </div>
+</div>
+
+<div id="content" class="row mb-20">
+    <div class="col-md-12">
+        <form method="post" action="{% url "report_login" %}">
+            <div class="form-group">
+                <input name="username" type="text">
+                <input name="password" type="password">
+                {% if next %}
+                <input name="next" type="hidden" value="{{ next }}">
+                {% endif %}
+            </div>
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+            <button type="submit" class="btn btn-default">{% trans "Login" %}</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_footer %}
+{% endblock %}

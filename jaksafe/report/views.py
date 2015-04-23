@@ -129,7 +129,7 @@ def report_flood(request, template='report/report_flood.html'):
             # process filter
             print "DEBUG t0 = %s, t1 = %s" % (date_range['t0'], date_range['t1'])
             
-            cursor.execute("SELECT unit, village, district, rt, rw, depth, report_time, request_time FROM fl_event WHERE report_time >= '%s' AND report_time <= '%s' ORDER BY report_time DESC" % (date_range['t0'], date_range['t1']))
+            cursor.execute("SELECT unit, village, district, rt, rw, depth, report_time, request_time FROM fl_event WHERE report_time >= '%s' AND report_time <= '%s' ORDER BY request_time DESC, report_time DESC" % (date_range['t0'], date_range['t1']))
             
             resultset = dictfetchall(cursor)
             
@@ -158,18 +158,26 @@ def report_flood(request, template='report/report_flood.html'):
             offset = records_per_page * (page)
         
         records_left = records_total - (records_per_page * (page + 1))
+        page_total = records_total / records_per_page
+        
+        if records_total % records_per_page == 0:
+            page_total = page_total - 1
         
         print 'DEBUG total records = %s' % records_total
         print 'DEBUG page = %s' % page
+        print 'DEBUG page_total = %s' % page_total
         print 'DEBUG offset = %s' % offset
         print 'DEBUG records_left = %s' % records_left
         print 'DEBUG records_per_page = %s' % records_per_page
         
-        cursor.execute("SELECT unit, village, district, rt, rw, depth, report_time, request_time FROM fl_event ORDER BY report_time DESC LIMIT %s, %s" % (offset, records_per_page))
+        cursor.execute("SELECT unit, village, district, rt, rw, depth, report_time, request_time FROM fl_event ORDER BY request_time DESC, report_time DESC LIMIT %s, %s" % (offset, records_per_page))
         
         resultset = dictfetchall(cursor)
         
         context_dict["page"] = page
+        context_dict["page_total"] = page_total
+        context_dict["offset"] = offset
+        context_dict["records_total"] = records_total
         context_dict["records_left"] = records_left
         context_dict["records_per_page"] = records_per_page
         context_dict["fl_event"] = resultset
@@ -181,6 +189,8 @@ def report_auto(request, template='report/report_auto.html'):
     context_dict["page_title"] = 'JakSAFE Automatic Report'
     context_dict["errors"] = []
     context_dict["successes"] = []
+    
+    records_per_page = settings.RECORDS_PER_PAGE
     
     cursor = connection.cursor()
     
@@ -209,12 +219,44 @@ def report_auto(request, template='report/report_auto.html'):
             
             return HttpResponseRedirect(reverse('report_auto'))
     else:
-        cursor.execute("SELECT id, t0, t1, damage, loss FROM auto_calc ORDER BY id DESC")
+        cursor.execute("SELECT count(id) FROM auto_calc")
+        row = cursor.fetchone()
+        
+        records_total = row[0]
+        
+        page = 0
+        offset = 0
+        
+        p = request.GET.get('page', False)
+        
+        if p != False and p.isdigit():
+            print 'DEBUG p = %s' % p
+            page = int(p)
+            offset = records_per_page * (page)
+        
+        records_left = records_total - (records_per_page * (page + 1))
+        page_total = records_total / records_per_page
+        
+        if records_total % records_per_page == 0:
+            page_total = page_total - 1
+        
+        print 'DEBUG total records = %s' % records_total
+        print 'DEBUG page = %s' % page
+        print 'DEBUG page_total = %s' % page_total
+        print 'DEBUG offset = %s' % offset
+        print 'DEBUG records_left = %s' % records_left
+        print 'DEBUG records_per_page = %s' % records_per_page
+        
+        cursor.execute("SELECT id, t0, t1, damage, loss FROM auto_calc ORDER BY id DESC LIMIT %s, %s" % (offset, records_per_page))
         
         resultset = dictfetchall(cursor)
         
-        print resultset
-        print 'DEBUG %s' % settings.PROJECT_ROOT
+        context_dict["page"] = page
+        context_dict["page_total"] = page_total
+        context_dict["offset"] = offset
+        context_dict["records_total"] = records_total
+        context_dict["records_left"] = records_left
+        context_dict["records_per_page"] = records_per_page
         
         context_dict["jakservice_auto_output_report_url"] = settings.JAKSERVICE_AUTO_OUTPUT_URL + settings.JAKSERVICE_REPORT_DIR
         context_dict["jakservice_auto_output_log_url"] = settings.JAKSERVICE_AUTO_OUTPUT_URL + settings.JAKSERVICE_LOG_DIR
@@ -228,10 +270,37 @@ def report_adhoc(request, template='report/report_adhoc.html'):
     context_dict["errors"] = []
     context_dict["successes"] = []
     
+    records_per_page = settings.RECORDS_PER_PAGE
+    
     cursor = connection.cursor()
     
     # adhoc calc date range posted
-    if request.method == "POST" and request.user.is_authenticated():
+    if request.method == "POST" and "filter" in request.POST:
+        # handle form submit
+        t0 = request.POST.get('t0')
+        t1 = request.POST.get('t1')
+        
+        # check if given date is valid, start date < end date
+        date_range = valid_date(t0, t1, adhoc=True)
+        
+        if (date_range != False):
+            # process filter
+            print "DEBUG t0 = %s, t1 = %s" % (date_range['t0'], date_range['t1'])
+            print "DEBUG s = %s, e = %s" % (date_range['s'], date_range['e'])
+            
+            cursor.execute("SELECT id, t0, t1, damage, loss FROM adhoc_calc WHERE t0 >= '%s' AND t1 <= '%s' ORDER BY id DESC" % (date_range['t0'], date_range['t1']))
+            
+            resultset = dictfetchall(cursor)
+            
+            context_dict["adhoc_calc"] = resultset
+            
+            messages.add_message(request, messages.INFO, "Showing reports for date period: %s - %s" % (date_range['t0'], date_range['t1']))
+        else:
+            # invalid date range given, set flash message and redirect
+            messages.add_message(request, messages.ERROR, "Please input a valid date period.")
+            
+            return HttpResponseRedirect(reverse('report_adhoc'))
+    elif request.method == "POST" and "generate_report" in request.POST and request.user.is_authenticated():
         # handle form submit
         t0 = request.POST.get('t0')
         t1 = request.POST.get('t1')
@@ -292,12 +361,46 @@ def report_adhoc(request, template='report/report_adhoc.html'):
             
             return HttpResponseRedirect(reverse('report_adhoc'))
     else:
-        #?? if latest adhoc_calc record damage/loss == null, set inprogress context, in template inprogress sets meta refresh in adhoc_calc template
+        cursor.execute("SELECT count(id) FROM adhoc_calc")
+        row = cursor.fetchone()
+        
+        records_total = row[0]
+        
+        page = 0
+        offset = 0
+        
+        p = request.GET.get('page', False)
+        
+        if p != False and p.isdigit():
+            print 'DEBUG p = %s' % p
+            page = int(p)
+            offset = records_per_page * (page)
+        
+        records_left = records_total - (records_per_page * (page + 1))
+        page_total = records_total / records_per_page
+        
+        if records_total % records_per_page == 0:
+            page_total = page_total - 1
+        
+        print 'DEBUG total records = %s' % records_total
+        print 'DEBUG page = %s' % page
+        print 'DEBUG page_total = %s' % page_total
+        print 'DEBUG offset = %s' % offset
+        print 'DEBUG records_left = %s' % records_left
+        print 'DEBUG records_per_page = %s' % records_per_page
+        
         
         #?? query and return adhoc_calc context
-        cursor.execute("SELECT id, t0, t1, damage, loss FROM adhoc_calc ORDER BY id DESC")
+        cursor.execute("SELECT id, t0, t1, damage, loss FROM adhoc_calc ORDER BY id DESC LIMIT %s, %s" % (offset, records_per_page))
         
         resultset = dictfetchall(cursor)
+        
+        context_dict["page"] = page
+        context_dict["page_total"] = page_total
+        context_dict["offset"] = offset
+        context_dict["records_total"] = records_total
+        context_dict["records_left"] = records_left
+        context_dict["records_per_page"] = records_per_page
         
         context_dict["jakservice_adhoc_output_report_url"] = settings.JAKSERVICE_ADHOC_OUTPUT_URL + settings.JAKSERVICE_REPORT_DIR
         context_dict["jakservice_adhoc_output_log_url"] = settings.JAKSERVICE_ADHOC_OUTPUT_URL + settings.JAKSERVICE_LOG_DIR

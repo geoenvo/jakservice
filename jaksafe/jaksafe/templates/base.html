@@ -15,8 +15,8 @@
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+      <script src="{{ STATIC_URL }}js/html5shiv.js"></script>
+      <script src="{{ STATIC_URL }}js/respond.min.js"></script>
     <![endif]-->
   </head>
   <body>
@@ -29,8 +29,8 @@
                     </a>
                 </div>
                 <ul class="nav navbar-nav">
-                    {% url "report_auto" as report_auto_url %}<li {% if request.get_full_path == report_auto_url %}class="active"{% endif %}><a href="{% url "report_auto" %}">{% trans "Automatic Report" %}</a></li>
-                    {% url "report_adhoc" as report_adhoc_url %}<li {% if request.get_full_path == report_adhoc_url %}class="active"{% endif %}><a href="{% url "report_adhoc" %}">{% trans "Ad Hoc DaLA" %}</a></li>
+                    {% url "report_auto" as report_auto_url %}<li {% if report_auto_url in request.get_full_path %}class="active"{% endif %}><a href="{% url "report_auto" %}">{% trans "Automatic Report" %}</a></li>
+                    {% url "report_adhoc" as report_adhoc_url %}<li {% if report_adhoc_url in request.get_full_path %}class="active"{% endif %}><a href="{% url "report_adhoc" %}">{% trans "Ad Hoc DaLA" %}</a></li>
                     {% url "report_flood" as report_flood_url %}<li {% if report_flood_url in request.get_full_path %}class="active"{% endif %}><a href="{% url "report_flood" %}">{% trans "Flood Reports" %}</a></li>
                     {% if user.is_authenticated %}
                     <li class="dropdown">

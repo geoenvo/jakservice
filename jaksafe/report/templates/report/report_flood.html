@@ -86,22 +86,30 @@
         {% if page == 0 and records_left > 0 %}
         <nav>
             <ul class="pager">
-                <li><a href="?page={{ page|add:1 }}">{% trans "Next" %} <span aria-hidden="true">&rarr;</span></a></li>
+                <li><a href="{{ request.path }}?page={{ page|add:1 }}">{% trans "Next" %} <span aria-hidden="true">&rarr;</span></a></li>
+                <li><a href="{{ request.path }}?page={{ page_total }}">{% trans "Last" %}</a></li>
             </ul>
         </nav>
-        {% elif page > 0 and records_left >= records_per_page %}
+        {% elif page > 0 and records_left > 0 %}
         <nav>
             <ul class="pager">
-                <li><a href="?page={{ page|add:-1 }}"><span aria-hidden="true">&larr;</span> {% trans "Previous" %}</a></li>
-                <li><a href="?page={{ page|add:1 }}">{% trans "Next" %} <span aria-hidden="true">&rarr;</span></a></li>
+                <li><a href="{{ request.path }}">{% trans "First" %}</a></li>
+                <li><a href="{{ request.path }}?page={{ page|add:-1 }}"><span aria-hidden="true">&larr;</span> {% trans "Previous" %}</a></li>
+                <li><a href="{{ request.path }}?page={{ page|add:1 }}">{% trans "Next" %} <span aria-hidden="true">&rarr;</span></a></li>
+                <li><a href="{{ request.path }}?page={{ page_total }}">{% trans "Last" %}</a></li>
             </ul>
         </nav>
         {% elif page > 0 and records_left < records_per_page %}
         <nav>
             <ul class="pager">
-                <li><a href="?page={{ page|add:-1 }}"><span aria-hidden="true">&larr;</span> {% trans "Previous" %}</a></li>
+                <li><a href="{{ request.path }}">{% trans "First" %}</a></li>
+                <li><a href="{{ request.path }}?page={{ page|add:-1 }}"><span aria-hidden="true">&larr;</span> {% trans "Previous" %}</a></li>
             </ul>
         </nav>
+        {% endif %}
+        
+        {% if records_per_page %}
+        <p class="text-center"> {{ offset|add:1 }}-{% if records_left <= 0 %}{{ offset|add:records_per_page|add:records_left }}{% else %}{{ offset|add:records_per_page }}{% endif %} / {{ records_total }}</p>
         {% endif %}
         
         <table class="table table-striped table-hover table-condensed">
@@ -121,7 +129,13 @@
             <tbody>
                 {% for fl in fl_event %}
                 <tr>
-                    <td>{{ page|multiply:records_per_page|add:forloop.counter }}.</td>
+                    <td>
+                    {% if records_per_page %}
+                    {{ page|multiply:records_per_page|add:forloop.counter }}.
+                    {% else %}
+                    {{ forloop.counter }}.
+                    {% endif %}
+                    </td>
                     <td>{{ fl.unit }}</td>
                     <td>{{ fl.village }}</td>
                     <td>{{ fl.district }}</td>
@@ -135,23 +149,31 @@
             </tbody>
         </table>
         
+        {% if records_per_page %}
+        <p class="text-center"> {{ offset|add:1 }}-{% if records_left <= 0 %}{{ offset|add:records_per_page|add:records_left }}{% else %}{{ offset|add:records_per_page }}{% endif %} / {{ records_total }}</p>
+        {% endif %}
+        
         {% if page == 0 and records_left > 0 %}
         <nav>
             <ul class="pager">
-                <li><a href="?page={{ page|add:1 }}">{% trans "Next" %} <span aria-hidden="true">&rarr;</span></a></li>
+                <li><a href="{{ request.path }}?page={{ page|add:1 }}">{% trans "Next" %} <span aria-hidden="true">&rarr;</span></a></li>
+                <li><a href="{{ request.path }}?page={{ page_total }}">{% trans "Last" %}</a></li>
             </ul>
         </nav>
-        {% elif page > 0 and records_left >= records_per_page %}
+        {% elif page > 0 and records_left > 0 %}
         <nav>
             <ul class="pager">
-                <li><a href="?page={{ page|add:-1 }}"><span aria-hidden="true">&larr;</span> {% trans "Previous" %}</a></li>
-                <li><a href="?page={{ page|add:1 }}">{% trans "Next" %} <span aria-hidden="true">&rarr;</span></a></li>
+                <li><a href="{{ request.path }}">{% trans "First" %}</a></li>
+                <li><a href="{{ request.path }}?page={{ page|add:-1 }}"><span aria-hidden="true">&larr;</span> {% trans "Previous" %}</a></li>
+                <li><a href="{{ request.path }}?page={{ page|add:1 }}">{% trans "Next" %} <span aria-hidden="true">&rarr;</span></a></li>
+                <li><a href="{{ request.path }}?page={{ page_total }}">{% trans "Last" %}</a></li>
             </ul>
         </nav>
         {% elif page > 0 and records_left < records_per_page %}
         <nav>
             <ul class="pager">
-                <li><a href="?page={{ page|add:-1 }}"><span aria-hidden="true">&larr;</span> {% trans "Previous" %}</a></li>
+                <li><a href="{{ request.path }}">{% trans "First" %}</a></li>
+                <li><a href="{{ request.path }}?page={{ page|add:-1 }}"><span aria-hidden="true">&larr;</span> {% trans "Previous" %}</a></li>
             </ul>
         </nav>
         {% endif %}

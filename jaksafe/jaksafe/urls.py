@@ -3,13 +3,15 @@ from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
 from django.conf import settings
+from django.core.urlresolvers import reverse_lazy
+from django.views.generic import RedirectView
 
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'jaksafe.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    url(r'^$', 'report.views.report_auto', name='report_auto'),
+    url(r'^$', RedirectView.as_view(url=reverse_lazy('report_auto')), name='index'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^report/', include('report.urls')),
     url(r'^pages/', include('django.contrib.flatpages.urls')),

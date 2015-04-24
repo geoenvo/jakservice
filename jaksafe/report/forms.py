@@ -10,19 +10,21 @@ class ImpactClassForm(forms.Form):
     )
     
     def clean_impact_class_file(self):
-        impact_class_file = self.cleaned_data['impact_class_file']
-        content_type = impact_class_file.content_type.split('/')[1]
-        size = impact_class_file._size
+        the_file = self.cleaned_data['impact_class_file']
+        content_type = the_file.content_type.split('/')[1]
+        size = the_file._size
+        filename = the_file.name
         
-        print 'DEBUG %s' % content_type
+        print 'DEBUG filename = %s' % filename
+        print 'DEBUG content_type = %s' % content_type
         
-        if content_type in settings.CONTENT_TYPES:
+        if filename.lower().endswith('.csv') or content_type in settings.CONTENT_TYPES:
             if size > settings.MAX_UPLOAD_SIZE:
                 raise forms.ValidationError(_("File size is over %s. Current file size %s.") % (filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(size)))
         else:
             raise forms.ValidationError(_('File type is not supported.'))
         
-        return impact_class_file
+        return the_file
 
 class AggregateForm(forms.Form):
     aggregate_file = forms.FileField(
@@ -31,19 +33,21 @@ class AggregateForm(forms.Form):
     )
     
     def clean_aggregate_file(self):
-        aggregate_file = self.cleaned_data['aggregate_file']
-        content_type = aggregate_file.content_type.split('/')[1]
-        size = aggregate_file._size
+        the_file = self.cleaned_data['aggregate_file']
+        content_type = the_file.content_type.split('/')[1]
+        size = the_file._size
+        filename = the_file.name
         
-        print 'DEBUG %s' % content_type
+        print 'DEBUG filename = %s' % filename
+        print 'DEBUG content_type = %s' % content_type
         
-        if content_type in settings.CONTENT_TYPES:
+        if filename.lower().endswith('.csv') or content_type in settings.CONTENT_TYPES:
             if size > settings.MAX_UPLOAD_SIZE:
                 raise forms.ValidationError(_("File size is over %s. Current file size %s.") % (filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(size)))
         else:
             raise forms.ValidationError(_('File type is not supported.'))
         
-        return aggregate_file
+        return the_file
 
 class AssumptionsDamageForm(forms.Form):
     assumptions_damage_file = forms.FileField(
@@ -55,10 +59,12 @@ class AssumptionsDamageForm(forms.Form):
         the_file = self.cleaned_data['assumptions_damage_file']
         content_type = the_file.content_type.split('/')[1]
         size = the_file._size
+        filename = the_file.name
         
-        print 'DEBUG %s' % content_type
+        print 'DEBUG filename = %s' % filename
+        print 'DEBUG content_type = %s' % content_type
         
-        if content_type in settings.CONTENT_TYPES:
+        if filename.lower().endswith('.csv') or content_type in settings.CONTENT_TYPES:
             if size > settings.MAX_UPLOAD_SIZE:
                 raise forms.ValidationError(_("File size is over %s. Current file size %s.") % (filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(size)))
         else:
@@ -76,10 +82,12 @@ class AssumptionsLossForm(forms.Form):
         the_file = self.cleaned_data['assumptions_loss_file']
         content_type = the_file.content_type.split('/')[1]
         size = the_file._size
+        filename = the_file.name
         
-        print 'DEBUG %s' % content_type
+        print 'DEBUG filename = %s' % filename
+        print 'DEBUG content_type = %s' % content_type
         
-        if content_type in settings.CONTENT_TYPES:
+        if filename.lower().endswith('.csv') or content_type in settings.CONTENT_TYPES:
             if size > settings.MAX_UPLOAD_SIZE:
                 raise forms.ValidationError(_("File size is over %s. Current file size %s.") % (filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(size)))
         else:
@@ -97,10 +105,12 @@ class AssumptionsAggregateForm(forms.Form):
         the_file = self.cleaned_data['assumptions_aggregate_file']
         content_type = the_file.content_type.split('/')[1]
         size = the_file._size
+        filename = the_file.name
         
-        print 'DEBUG %s' % content_type
+        print 'DEBUG filename = %s' % filename
+        print 'DEBUG content_type = %s' % content_type
         
-        if content_type in settings.CONTENT_TYPES:
+        if filename.lower().endswith('.csv') or content_type in settings.CONTENT_TYPES:
             if size > settings.MAX_UPLOAD_SIZE:
                 raise forms.ValidationError(_("File size is over %s. Current file size %s.") % (filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(size)))
         else:
@@ -118,10 +128,12 @@ class AssumptionsInsuranceForm(forms.Form):
         the_file = self.cleaned_data['assumptions_insurance_file']
         content_type = the_file.content_type.split('/')[1]
         size = the_file._size
+        filename = the_file.name
         
-        print 'DEBUG %s' % content_type
+        print 'DEBUG filename = %s' % filename
+        print 'DEBUG content_type = %s' % content_type
         
-        if content_type in settings.CONTENT_TYPES:
+        if filename.lower().endswith('.csv') or content_type in settings.CONTENT_TYPES:
             if size > settings.MAX_UPLOAD_SIZE:
                 raise forms.ValidationError(_("File size is over %s. Current file size %s.") % (filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(size)))
         else:
@@ -139,10 +151,12 @@ class AssumptionsInsurancePenetrationForm(forms.Form):
         the_file = self.cleaned_data['assumptions_insurance_penetration_file']
         content_type = the_file.content_type.split('/')[1]
         size = the_file._size
+        filename = the_file.name
         
-        print 'DEBUG %s' % content_type
+        print 'DEBUG filename = %s' % filename
+        print 'DEBUG content_type = %s' % content_type
         
-        if content_type in settings.CONTENT_TYPES:
+        if filename.lower().endswith('.csv') or content_type in settings.CONTENT_TYPES:
             if size > settings.MAX_UPLOAD_SIZE:
                 raise forms.ValidationError(_("File size is over %s. Current file size %s.") % (filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(size)))
         else:

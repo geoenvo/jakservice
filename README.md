@@ -56,6 +56,8 @@
     * \# adjust the jakservice dirs (use the default)
     * \# check PYTHON_EXEC path (default is to use the ‘JakSAFE’ virtualenv Python binary)
 * python manage.py migrate
+* nano jaksafe/settings.py
+    * \# uncomment extended_flatpages in INSTALLED_APPS
 * python manage.py createsuperuser
     * \# create the admin account
 

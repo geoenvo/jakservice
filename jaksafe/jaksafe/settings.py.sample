@@ -41,7 +41,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.flatpages',
     'ckeditor',
-    'extended_flatpages',
+    #'extended_flatpages',
 )
 
 MIDDLEWARE_CLASSES = (

@@ -16,3 +16,4 @@ jaksafe/jaksafe/settings.py
 log/*.log
 man
 jaksafe/jaksafe/jakservice/*
+sample_psycopg

@@ -1,0 +1,9 @@
+CREATE TABLE `adhoc_calc`(  
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id_event` INT UNSIGNED,
+  `t0` DATETIME NOT NULL,
+  `t1` DATETIME NOT NULL,
+  `damage` DECIMAL(17,2),
+  `loss` DECIMAL(17,2),
+  PRIMARY KEY (`id`)
+);
